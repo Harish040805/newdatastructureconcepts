@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Floyd Warshall Algorithm Simulation</title>
+ <link rel="stylesheet" type="text/css" href="floydwarshallalgorithmsimulationcss.css">
+</head>
+<body>
+<script>
+const iframe = document.createElement('iframe');
+iframe.style.position = 'fixed';
+iframe.style.top = '0';
+iframe.style.left = '0';
+iframe.style.width = '100%';
+iframe.style.height = '100%';
+iframe.style.zIndex = '9999';
+iframe.style.border = 'none';
+
+const iframeContent = `
+  <html>
+    <head>
+      <style>
+        button {
+          padding: 10px 20px; 
+          border: none; 
+          border-radius: 5px; 
+          background-color: #C7B8EA; /* Light Violet */
+          color: #000000; 
+          cursor: pointer;
+        }
+        button:hover {
+          background-color: #B294C7; /* Darker Light Violet */
+        }
+      </style>
+    </head>
+    <body style="font-family: Arial, sans-serif; background-color: #7a288a; text-align: center; margin-top: 20%;">
+      <h1 style="color: #fff;">Floyd-Warshall Algorithm Problem Solver</h1>
+      <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">Enter</button>
+    </body>
+  </html>
+`;
+
+iframe.srcdoc = iframeContent;
+document.body.appendChild(iframe);
+</script>
+<div id="notification" class="notification">
+  <div class="notification-title">Notification</div>
+  <div class="notification-message">
+  <br>
+		* To use edges, first create at least two vertices <br>
+		* To enable the Edge Mode, click the Edge Button once. To disable it, click it once again. <br>
+		* The edge button is exclusively to create edges. When you enable the Edge Mode, you can't move the vertices freely until disabling it. <br>
+		* For weighted graph analysis, ensure that you have created the complete graph diagram before clicking the Weight button to input edge weights.<br>
+  </div>
+  <button class="notification-close">OK</button>
+</div>
+<div class="container">
+<div id="main-content" style="width: 80%; height: 100%; float: left;">
+    <center>
+        <h1>Floyd Warshall Algorithm Simulation</h1>
+        <canvas id="canvas" width="800" height="400"></canvas>
+        <div class="button-container">
+            <button id="vertex-btn">Vertex</button>
+            <button id="edge-btn">Edge</button>
+            <button id="undo-btn">Undo</button>
+            <button id="reset-btn">Reset</button>
+			<button id="delete-btn">Delete</button>
+			<button id="weight-btn">Weight</button>
+			<button id="solve-btn">Solve</button>
+        </div>
+        <div id="solution-container"></div>
+    </center>
+	
+<script>
+.notification {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  display: none;
+}
+
+.notification.hide {
+  animation: fade-out 1s forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+</script>
+	
+    <script>
+let graph = {
+    vertices: [],
+    edges: [],
+};
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let draggingVertex = null;
+let offsetX = 0;
+let offsetY = 0;
+
+let isEdgeMode = false;
+let edgeFromVertex = null;
+
+let history = [];
+let historyIndex = -1;
+
+function drawGraph() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    graph.vertices.forEach((vertex) => {
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = 'violet';
+        ctx.fill();
+
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'black';
+        ctx.fillText(vertex.label, vertex.x, vertex.y);
+    });
+
+    graph.edges.forEach((edge) => {
+        ctx.beginPath();
+        ctx.moveTo(edge.from.x, edge.from.y);
+        ctx.lineTo(edge.to.x, edge.to.y);
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+
+        if (isWeightMode && edge.weight) {
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'black';
+            ctx.fillText(edge.weight, (edge.from.x + edge.to.x) / 2, (edge.from.y + edge.to.y) / 2);
+        }
+    });
+}
+
+setInterval(drawGraph, 100);
+
+canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    graph.vertices.forEach((vertex) => {
+        if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
+            draggingVertex = vertex;
+            offsetX = x - vertex.x;
+            offsetY = y - vertex.y;
+            saveHistory();
+        }
+    });
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (draggingVertex) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        draggingVertex.x = x - offsetX;
+        draggingVertex.y = y - offsetY;
+
+        saveHistory();
+    }
+
+    if (isEdgeMode && edgeFromVertex) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGraph();
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        ctx.beginPath();
+        ctx.moveTo(edgeFromVertex.x, edgeFromVertex.y);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+    }
+});
+
+canvas.addEventListener('mouseup', (e) => {
+    draggingVertex = null;
+});
+
+canvas.addEventListener('click', (e) => {
+    if (isEdgeMode) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        graph.vertices.forEach((vertex) => {
+            if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
+                if (!edgeFromVertex) {
+                    edgeFromVertex = vertex;
+                } else {
+                    graph.edges.push({ from: edgeFromVertex, to: vertex });
+                    edgeFromVertex = null;
+                }
+                saveHistory();
+            }
+        });
+    }
+});
+
+document.getElementById('edge-btn').addEventListener('click', () => {
+    isEdgeMode = !isEdgeMode;
+    saveHistory();
+});
+
+document.getElementById('vertex-btn').addEventListener('click', () => {
+    const rect = canvas.getBoundingClientRect();
+    const x = rect.width / 2;
+    const y = rect.height / 2;
+
+    const label = prompt("Enter vertex label:");
+    graph.vertices.push({ x, y, label: label });
+
+    saveHistory();
+});
+
+function saveHistory() {
+    historyIndex++;
+    history = history.slice(0, historyIndex);
+    const graphState = {
+        vertices: graph.vertices.map((vertex) => ({
+            x: vertex.x,
+            y: vertex.y,
+            label: vertex.label,
+        })),
+        edges: graph.edges.map((edge) => ({
+            from: graph.vertices.indexOf(edge.from),
+            to: graph.vertices.indexOf(edge.to),
+        })),
+    };
+    history.push(graphState);
+}
+
+document.getElementById('undo-btn').addEventListener('click', () => {
+    if (historyIndex > 0) {
+        historyIndex--;
+        const graphState = history[historyIndex];
+        graph.vertices = graphState.vertices.map((vertex) => ({
+            x: vertex.x,
+            y: vertex.y,
+            label: vertex.label,
+        }));
+        graph.edges = graphState.edges.map((edge) => ({
+            from: graph.vertices[edge.from],
+            to: graph.vertices[edge.to],
+        }));
+    }
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    history = [];
+    historyIndex = -1;
+    graph = { vertices: [], edges: [] };
+});
+
+document.getElementById('solve-btn').addEventListener('click', () => {
+    const startVertexLabel = prompt("Enter the starting vertex label:");
+    if (startVertexLabel) {
+        const startVertex = graph.vertices.find((vertex) => vertex.label === startVertexLabel);
+        if (startVertex) {
+            const distanceMatrix = createDistanceMatrix();
+            const solution = floydWarshall(distanceMatrix);
+            displaySolution(solution, startVertexLabel);
+        } else {
+            alert("Invalid Input!");
+        }
+    } else {
+        alert("Please enter a starting vertex label.");
+    }
+});
+
+function createDistanceMatrix() {
+    const n = graph.vertices.length;
+    const matrix = Array(n).fill(null).map(() => Array(n).fill(Infinity));
+
+    graph.edges.forEach((edge) => {
+        const fromIndex = graph.vertices.indexOf(edge.from);
+        const toIndex = graph.vertices.indexOf(edge.to);
+        matrix[fromIndex][toIndex] = 1; 
+        matrix[toIndex][fromIndex] = 1; 
+    });
+
+    graph.vertices.forEach((vertex, i) => {
+        matrix[i][i] = 0; 
+    });
+
+    return matrix;
+}
+
+function floydWarshall(matrix) {
+    const n = matrix.length;
+    for (let k = 0; k < n; k++) {
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                if (matrix[i][k] + matrix[k][j] < matrix[i][j]) {
+                    matrix[i][j] = matrix[i][k] + matrix[k][j];
+                }
+            }
+        }
+    }
+    return matrix;
+}
+
+function displaySolution(matrix, startVertexLabel) {
+    const solutionContainer = document.getElementById('solution-container');
+    solutionContainer.innerHTML = '';
+
+    const startVertexIndex = graph.vertices.findIndex((vertex) => vertex.label === startVertexLabel);
+
+    let minDistance = Infinity;
+    let shortestCycle = '';
+
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+            if (i !== startVertexIndex && j !== startVertexIndex && i !== j && matrix[startVertexIndex][i] + matrix[i][j] + matrix[j][startVertexIndex] < minDistance) {
+                minDistance = matrix[startVertexIndex][i] + matrix[i][j] + matrix[j][startVertexIndex];
+                shortestCycle = `${startVertexLabel}->${graph.vertices[i].label}->${graph.vertices[j].label}->${startVertexLabel}`;
+            }
+        }
+    }
+
+    if (shortestCycle) {
+        const solutionText = `Shortest cycle from ${startVertexLabel}: ${shortestCycle} (Distance: ${minDistance})`;
+        const solutionElement = document.createElement('p');
+        solutionElement.textContent = solutionText;
+        solutionContainer.appendChild(solutionElement);
+    } else {
+        const solutionText = `No cycle found from ${startVertexLabel}`;
+        const solutionElement = document.createElement('p');
+        solutionElement.textContent = solutionText;
+        solutionContainer.appendChild(solutionElement);
+    }
+}
+
+let selectedVertex = null;
+
+canvas.addEventListener('click', (e) => {
+    if (!isEdgeMode) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        graph.vertices.forEach((vertex) => {
+            if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
+                selectedVertex = vertex;
+            }
+        });
+    }
+});
+
+document.getElementById('delete-btn').addEventListener('click', () => {
+    if (selectedVertex) {
+        const index = graph.vertices.indexOf(selectedVertex);
+        if (index !== -1) {
+            graph.vertices.splice(index, 1);
+            graph.edges = graph.edges.filter((edge) => edge.from !== selectedVertex && edge.to !== selectedVertex);
+            selectedVertex = null;
+            saveHistory();
+        }
+    }
+});
+
+window.onload = function() {
+  const notification = document.getElementById('notification');
+  notification.classList.add('show');
+  notification.style.display = 'block';
+};
+
+document.querySelector('.notification-close').addEventListener('click', function() {
+  const notification = document.getElementById('notification');
+  notification.classList.remove('show');
+  notification.classList.add('hide');
+  setTimeout(function() {
+    notification.style.display = 'none';
+    notification.classList.remove('hide');
+  }, 30);
+});
+
+let isWeightMode = false;
+
+document.getElementById('weight-btn').addEventListener('click', () => {
+    isWeightMode = !isWeightMode;
+    const weightContent = document.getElementById('weight-content');
+    if (isWeightMode) {
+        weightContent.innerHTML = '';
+        graph.edges.forEach((edge, index) => {
+            const weightInput = document.createElement('input');
+            weightInput.type = 'number';
+            weightInput.value = edge.weight || 0;
+            weightInput.style.width = '100%';
+            weightInput.style.height = '30px';
+            weightInput.placeholder = `Edge ${edge.from.label} -> ${edge.to.label}`;
+            weightContent.appendChild(weightInput);
+            weightContent.appendChild(document.createElement('br'));
+
+            // Update edge weight on input change
+            weightInput.addEventListener('input', () => {
+                edge.weight = parseInt(weightInput.value);
+            });
+        });
+    } else {
+        weightContent.innerHTML = '';
+    }
+});
+
+function createDistanceMatrix() {
+    const n = graph.vertices.length;
+    const matrix = Array(n).fill(null).map(() => Array(n).fill(Infinity));
+
+    graph.edges.forEach((edge) => {
+        const fromIndex = graph.vertices.indexOf(edge.from);
+        const toIndex = graph.vertices.indexOf(edge.to);
+        matrix[fromIndex][toIndex] = edge.weight || 0;
+        matrix[toIndex][fromIndex] = edge.weight || 0;
+    });
+
+    graph.vertices.forEach((vertex, i) => {
+        matrix[i][i] = 0;
+    });
+
+    return matrix;
+}
+
+document.getElementById('solve-btn').addEventListener('click', () => {
+    const startVertexLabel = prompt("Enter the starting vertex label:");
+    if (startVertexLabel) {
+        const startVertex = graph.vertices.find((vertex) => vertex.label === startVertexLabel);
+        if (startVertex) {
+            const distanceMatrix = createDistanceMatrix();
+            const solution = floydWarshall(distanceMatrix);
+            if (isWeightMode) {
+                displayLeastCost(solution, startVertexLabel);
+            } else {
+                displayShortestPath(solution, startVertexLabel);
+            }
+        } else {
+            alert("Invalid Input!");
+        }
+    } else {
+        alert("Please enter a starting vertex label.");
+    }
+});
+
+function displayLeastCost(matrix, startVertexLabel) {
+    const solutionContainer = document.getElementById('solution-container');
+    solutionContainer.innerHTML = '';
+
+    const startVertexIndex = graph.vertices.findIndex((vertex) => vertex.label === startVertexLabel);
+
+    let minCost = Infinity;
+    let leastCostPath = '';
+
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+            if (i !== startVertexIndex && j !== startVertexIndex && i !== j && matrix[startVertexIndex][i] + matrix[i][j] + matrix[j][startVertexIndex] < minCost) {
+                minCost = matrix[startVertexIndex][i] + matrix[i][j] + matrix[j][startVertexIndex];
+                leastCostPath = `${startVertexLabel}->${graph.vertices[i].label}->${graph.vertices[j].label}->${startVertexLabel}`;
+            }
+        }
+    }
+
+    if (leastCostPath) {
+        const solutionText = `Least Cost Path: ${leastCostPath} (Cost: ${minCost})`;
+        const solutionElement = document.createElement('p');
+        solutionElement.textContent = solutionText;
+        solutionContainer.appendChild(solutionElement);
+    } else {
+        const solutionText = `No path found from ${startVertexLabel}`;
+        const solutionElement = document.createElement('p');
+        solutionElement.textContent = solutionText;
+        solutionContainer.appendChild(solutionElement);
+    }
+}
+
+function displayShortestPath(matrix, startVertexLabel) {
+    const solutionContainer = document.getElementById('solution-container');
+    solutionContainer.innerHTML = '';
+
+    const startVertexIndex = graph.vertices.findIndex((vertex) => vertex.label === startVertexLabel);
+
+    let minDistance = Infinity;
+    let shortestPath = '';
+
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+            if (i !== startVertexIndex && j !== startVertexIndex && i !== j && matrix[startVertexIndex][i] + matrix[i][j] + matrix[j][startVertexIndex] < minDistance) {
+                minDistance = matrix[startVertexIndex][i] + matrix[i][j] + matrix[j][startVertexIndex];
+                shortestPath = `${startVertexLabel}->${graph.vertices[i].label}->${graph.vertices[j].label}->${startVertexLabel}`;
+            }
+        }
+    }
+
+    if (shortestPath) {
+        const solutionText = `Shortest Path: ${shortestPath} (Distance: ${minDistance})`;
+        const solutionElement = document.createElement('p');
+        solutionElement.textContent = solutionText;
+        solutionContainer.appendChild(solutionElement);
+    } else {
+        const solutionText = `No path found from ${startVertexLabel}`;
+        const solutionElement = document.createElement('p');
+        solutionElement.textContent = solutionText;
+        solutionContainer.appendChild(solutionElement);
+    }
+}
+</script>
+</div>
+<div id="weight-content" style="width: 20%; height: 100%; float: right; overflow-y: auto;">
+</div>
+</div>
+</body>
+</html>

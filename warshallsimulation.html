@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warshall Algorithm</title>
+ <link rel="stylesheet" type="text/css" href="warshallcss.css">
+</head>
+<body>
+<center>
+	<h1>Warshall Algorithm Simulation</h1>
+</center>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script type="text/babel">
+        const { useState } = React;
+
+        function App() {
+            const [rows, setRows] = useState(0);
+            const [cols, setCols] = useState(0);
+            const [matrix, setMatrix] = useState([]);
+            const [transitiveClosure, setTransitiveClosure] = useState([]);
+            const [showOverlay, setShowOverlay] = useState(true);
+            const [inputMatrix, setInputMatrix] = useState(false);
+
+            const handleOverlayClose = () => {
+                setShowOverlay(false);
+                alert("Enter the number of rows in the matrix. The rows and columns should be same.");
+            };
+
+            const handleMatrixChange = (i, j, value) => {
+                const newMatrix = [...matrix];
+                newMatrix[i][j] = value;
+                setMatrix(newMatrix);
+            };
+
+const [vertices, setVertices] = useState(0);
+
+const createMatrix = () => {
+  const size = vertices;
+  const newMatrix = Array(size).fill().map(() => Array(size).fill(0));
+  setMatrix(newMatrix);
+  setInputMatrix(true);
+};
+
+const calculateTransitiveClosure = () => {
+  // Warshall algorithm
+  const newMatrix = [...matrix];
+  for (let k = 0; k < vertices; k++) {
+    for (let i = 0; i < vertices; i++) {
+      for (let j = 0; j < vertices; j++) {
+        if (newMatrix[i][k] === 1 && newMatrix[k][j] === 1) {
+          newMatrix[i][j] = 1;
+        }
+      }
+    }
+  }
+  setTransitiveClosure(newMatrix);
+};
+
+            return (
+                <div>
+                    {showOverlay && (
+                        <div className="overlay">
+                            <h1 style={{ color: '#fff' }}>Warshall Algorithm Problem Solver</h1>
+                            <button onClick={handleOverlayClose}>Enter</button>
+                        </div>
+                    )}
+                    {!showOverlay && (
+                        <div>
+                            {!inputMatrix && (
+                                <div>
+  <input 
+    type="number" 
+    placeholder="Number of Vertices" 
+    onChange={(e) => setVertices(parseInt(e.target.value))} 
+  />
+  <button onClick={createMatrix}>Create Matrix</button>
+</div>
+                            )}
+                            {inputMatrix && (
+                                <div>
+                                    {matrix.map((row, i) => (
+                                        <div key={i}>
+                                            {row.map((value, j) => (
+                                                <input
+													key={j}
+													type="number"
+													min={0}
+													max={1}
+													value={value}
+													onChange={(e) => {
+														const val = parseInt(e.target.value);
+														if (val === 0 || val === 1) {
+															handleMatrixChange(i, j, val);
+														} else {
+															alert("Invalid Input");
+															e.target.value = value;
+														}
+													}}
+												/>
+                                            ))}
+                                        </div>
+                                    ))}
+									<div className="menu-bar">
+                                    <button onClick={calculateTransitiveClosure}>Calculate Transitive Closure</button>
+									</div>
+                                    {transitiveClosure.length > 0 && (
+                                        <div>
+                                            <h2>Transitive Closure:</h2>
+                                            {transitiveClosure.map((row, i) => (
+                                                <div key={i}>
+                                                    {row.map((value, j) => (
+                                                        <span key={j}>{value} </span>
+                                                    ))}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>

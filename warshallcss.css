@@ -1,0 +1,85 @@
+        body {
+            font-family: Arial, sans-serif;
+			background-color: #e1f5fe;
+			padding: 20px;
+            margin: 0;
+        }
+        .matrix-input {
+            margin-bottom: 20px;
+        }
+        .matrix-input input[type="number"] {
+            width: 50px;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #81d4fa;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .overlay button {
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            background-color: #b3f5ec;
+            color: #000000; 
+            cursor: pointer;
+        }
+        .overlay button:hover {
+            background-color: #e1f5fe;
+        }
+		
+		.container {
+			padding: 20px;
+			margin: 20px;
+		}
+		input[type="number"] {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 150px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #b3f5ec;
+    color: #000000;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #87e0d1;
+}
+
+.menu-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #b3f5ec;
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+}
+
+.menu-bar button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #87e0d1;
+    color: #000000;
+    cursor: pointer;
+}
+
+.menu-bar button:hover {
+    background-color: #65d6c4;
+}
