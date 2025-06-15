@@ -1,0 +1,162 @@
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #b09600;
+      margin: 0;
+    }
+    .container {
+      display: flex;
+      height: 100%;
+    }
+    .main-content {
+      width: 70%;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .side-panel {
+      width: 30%;
+      background-color: #fff;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: #FFFFFF;
+    }
+    th, td {
+      border: 1px solid #FFD700;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #FFD700;
+      color: #000000;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #FFD700;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #FFC400;
+      color: #000000;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffbc00;
+    }
+    .delete-btn {
+      background-color: #FF0000;
+      color: #000000;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background-color: #E90000;
+    }
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 69%;
+      height: 60px;
+      background-color: #FFD700;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .error {
+      color: #FF0000;
+    }
+    .calculator-body {
+      width: 250px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #FFD700;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #calculator-display {
+      width: 92%;
+      height: 40px;
+      font-size: 24px;
+      text-align: right;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .calculator-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+      margin-top: 20px;
+    }
+    .calculator-button {
+      height: 40px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background-color: #fff;
+      cursor: pointer;
+    }
+    .calculator-button:hover {
+      background-color: #f5f5f5;
+    }
+	
+.percentagecalculator {
+    width: 300px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.percentagecalculator label {
+    display: block;
+    margin-bottom: 10px;
+}
+.percentagecalculator input[type="number"] {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+#percentagecalculate {
+    width: 100%;
+    height: 40px;
+    background-color: #FFC400;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#percentagecalculate:hover {
+    background-color: #ffbc00;
+}
+#percentageresult {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+#percentageclear {
+    width: 100%;
+    height: 40px;
+    background-color: #FFC400;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+#percentageclear:hover {
+    background-color: #FFbc00;
+}

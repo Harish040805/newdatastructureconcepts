@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractional Knapsack Problem Solver</title>
+ <link rel="stylesheet" type="text/css" href="fractionalknapsackcss.css">
+</head>
+<body>
+<!--
+    /* Knapsack Simulation */
+    /* Created by HARISH */  
+    /* DATA SCIENCE CONCEPT */  
+-->
+  <script>
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.zIndex = '9999';
+    iframe.style.border = 'none';
+
+    const iframeContent = `
+      <html>
+        <head>
+          <style>
+            button {
+              padding: 10px 20px; 
+              border: none; 
+              border-radius: 5px; 
+              background-color: #FFC400; 
+              color: #000000; 
+              cursor: pointer;
+            }
+            button:hover {
+              background-color: #ffbc00;
+            }
+          </style>
+        </head>
+        <body style="font-family: Arial, sans-serif; background-color: #b09600; text-align: center; margin-top: 20%;">
+          <h1 style="color: #fff;">Fractional Knapsack Problem Solver</h1>
+          <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">Enter</button>
+        </body>
+      </html>
+    `;
+
+    iframe.srcdoc = iframeContent;
+    document.body.appendChild(iframe);
+  </script>
+  <div class="container">
+    <div class="main-content" id="root"></div>
+    <div class="side-panel">
+      <h2>Maximum Weight Capacity of the Knapsack (User Input)</h2>
+      <input type="number" id="max-weight" placeholder="Enter maximum weight">
+      <br><br>
+      <b style="color: #ff0000;">NOTE:</b><p>No change in the input once fixed. Reload the page to start over and change the input.</p>
+      <br><br>
+      <button id="set-btn" onclick="setMaxWeight()">Set</button>
+      <button onclick="clearMaxWeight()">Clear</button>
+      <br><br>
+      <h2>Maximum Value and Selected Items</h2>
+      <p style="color: gray;">Output displayed here</p>
+      <div id="result"></div>
+      <h2 style="color: red" id="error"></h2>
+      <br><br><br>
+      <h2>Calculator</h2>
+	        <div class="ksubcalc">
+        <h2>Knapsack Upper Bound Calculator</h2>
+        <form id="knapsack-form">
+          <label for="max-weight">Maximum Weight:</label>
+          <br><br>
+          <input type="number" id="max-weight" required>
+          <br><br>
+          <label for="current-weight">Current Weight:</label>
+          <br><br>
+          <input type="number" id="current-weight" required>
+          <br><br>
+          <label for="current-value">Current Value:</label>
+          <br><br>
+          <input type="number" id="current-value" required>
+          <br><br>
+          <label for="remaining-items">Remaining Items:</label>
+          <br><br>
+          <div id="remaining-items-container">
+            <input type="number" id="item-value-0" placeholder="Value"><br><br>
+            <input type="number" id="item-weight-0" placeholder="Weight">
+            <br><br>
+            <button type="button" id="add-item-btn">Add Item</button>
+            &nbsp; &nbsp; &nbsp; &nbsp;
+            <button type="submit" id="calculate-btn">Calculate Upper Bound</button>
+          </div>
+		  <br><br><br>
+          <div id="additional-items"></div>
+        </form>
+        <p id="result"></p>
+      </div>
+      <div class="calculator-body">
+        <input type="text" id="calculator-display" disabled>
+        <div class="calculator-buttons">
+          <button class="calculator-button" id="calculator-clear">AC</button>
+          <button class="calculator-button" id="calculator-backspace">C</button>
+          <button class="calculator-button" id="calculator-divide">/</button>
+          <button class="calculator-button" id="calculator-multiply">*</button>
+          <button class="calculator-button" id="calculator-seven">7</button>
+          <button class="calculator-button" id="calculator-eight">8</button>
+          <button class="calculator-button" id="calculator-nine">9</button>
+          <button class="calculator-button" id="calculator-subtract">-</button>
+          <button class="calculator-button" id="calculator-four">4</button>
+          <button class="calculator-button" id="calculator-five">5</button>
+          <button class="calculator-button" id="calculator-six">6</button>
+          <button class="calculator-button" id="calculator-add">+</button>
+          <button class="calculator-button" id="calculator-one">1</button>
+          <button class="calculator-button" id="calculator-two">2</button>
+          <button class="calculator-button" id="calculator-three">3</button>
+          <button class="calculator-button" id="calculator-equals">=</button>
+          <button class="calculator-button" id="calculator-zero">0</button>
+          <button class="calculator-button" id="calculator-decimal">.</button>
+        </div>
+      </div>
+      <script>
+        const display = document.getElementById('calculator-display');
+        const buttons = document.querySelectorAll('.calculator-button');
+
+        let expression = '';
+
+        buttons.forEach(button => {
+          button.addEventListener('click', () => {
+            const value = button.textContent;
+
+            if (button.id === 'calculator-clear') {
+              expression = '';
+              display.value = '';
+            } else if (button.id === 'calculator-backspace') {
+              expression = expression.slice(0, -1);
+              display.value = expression;
+            } else if (button.id === 'calculator-equals') {
+              try {
+                const result = eval(expression);
+                display.value = result;
+                expression = result.toString();
+              } catch (error) {
+                display.value = 'Error';
+                expression = '';
+              }
+            } else {
+              expression += value;
+              display.value = expression;
+            }
+          });
+        });
+      </script>
+
+      <script>
+        let itemCount = 1;
+
+        document.getElementById('add-item-btn').addEventListener('click', () => {
+          const additionalItems = document.getElementById('additional-items');
+          const itemContainer = document.createElement('div');
+          itemContainer.classList.add('item-container');
+
+          const itemValueInput = document.createElement('input');
+          itemValueInput.type = 'number';
+          itemValueInput.id = `item-value-${itemCount}`;
+          itemValueInput.placeholder = 'Value';
+
+          const itemWeightInput = document.createElement('input');
+          itemWeightInput.type = 'number';
+          itemWeightInput.id = `item-weight-${itemCount}`;
+          itemWeightInput.placeholder = 'Weight';
+
+          const removeItemBtn = document.createElement('button');
+          removeItemBtn.type = 'button';
+          removeItemBtn.classList.add('remove-item-btn');
+          removeItemBtn.textContent = 'Remove';
+
+          removeItemBtn.addEventListener('click', () => {
+            itemContainer.remove();
+          });
+
+          itemContainer.appendChild(itemValueInput);
+          itemContainer.appendChild(itemWeightInput);
+          itemContainer.appendChild(removeItemBtn);
+
+          additionalItems.appendChild(itemContainer);
+          itemCount++;
+        });
+
+        document.getElementById('knapsack-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const maxWeight = parseFloat(document.getElementById('max-weight').value);
+          const currentWeight = parseFloat(document.getElementById('current-weight').value);
+          const currentValue = parseFloat(document.getElementById('current-value').value);
+
+          const remainingItems = [];
+          for (let i = 0; i < itemCount; i++) {
+            const itemValueInput = document.getElementById(`item-value-${i}`);
+            const itemWeightInput = document.getElementById(`item-weight-${i}`);
+            if (itemValueInput && itemWeightInput) {
+              const itemValue = parseFloat(itemValueInput.value);
+              const itemWeight = parseFloat(itemWeightInput.value);
+              if (!isNaN(itemValue) && !isNaN(itemWeight)) {
+                remainingItems.push([itemValue, itemWeight]);
+              }
+            }
+          }
+
+          const calculator = new KnapsackUpperBoundCalculator(maxWeight, currentWeight, currentValue, remainingItems);
+          const upperBound = calculator.calculateUpperBound();
+
+          document.getElementById('result').textContent = `Upper Bound: ${upperBound}`;
+        });
+
+        class KnapsackUpperBoundCalculator {
+          constructor(maxWeight, currentWeight, currentValue, remainingItems) {
+            this.maxWeight = maxWeight;
+            this.currentWeight = currentWeight;
+            this.currentValue = currentValue;
+            this.remainingItems = remainingItems;
+          }
+
+          calculateDBest() {
+            const ratios = this.remainingItems.map(([value, weight]) => value / weight);
+            return Math.max(...ratios) || 0;
+          }
+
+          calculateUpperBound() {
+            const dBest = this.calculateDBest();
+            const remainingWeight = this.maxWeight - this.currentWeight;
+            const upperBound = this.currentValue + remainingWeight * dBest;
+            return upperBound;
+          }
+        }
+      </script>
+<div class="percentagecalculator">
+    <h2>Calculate Percentage of Weight</h2>
+    <label for="percentage">Percentage (%):</label>
+    <input type="number" id="percentage" oninput="calcPercentage()" />
+    <label for="percentageweight">Weight (kg):</label>
+    <input type="number" id="percentageweight" oninput="calcPercentage()" />
+    <button id="percentageclear" onclick="clearFields()">Clear</button>
+    <p id="percentageresult"></p>
+</div>
+<script>
+    function calcPercentage() {
+        const pct = parseFloat(document.getElementById('percentage').value);
+        const wt = parseFloat(document.getElementById('percentageweight').value);
+        const pctResultElement = document.getElementById('percentageresult');
+
+        if (isNaN(pct) || isNaN(wt)) {
+            pctResultElement.textContent = 'Please enter valid numbers';
+            return;
+        }
+
+        const pctResult = (pct / 100) * wt;
+        pctResultElement.textContent = `${pct}% of ${wt} kg is ${pctResult.toFixed(2)} kg`;
+    }
+
+    function clearFields() {
+        document.getElementById('percentage').value = '';
+        document.getElementById('percentageweight').value = '';
+        document.getElementById('percentageresult').textContent = '';
+    }
+</script>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script type="text/babel">
+    let givenWeight = null;
+
+    function setMaxWeight() {
+      givenWeight = parseFloat(document.getElementById('max-weight').value);
+      if (isNaN(givenWeight) || givenWeight <= 0) {
+        document.getElementById('error').innerText = 'Invalid maximum weight';
+      } else {
+        document.getElementById('error').innerText = '';
+        renderApp();
+        document.getElementById('set-btn').disabled = true;
+      }
+    }
+
+    function clearMaxWeight() {
+      document.getElementById('max-weight').value = '';
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('error').innerText = '';
+      document.getElementById('set-btn').disabled = false;
+    }
+
+    function renderApp() {
+      const { useState } = React;
+
+      function App() {
+        const [items, setItems] = useState([
+          { weight: '', value: '', output: '' },
+        ]);
+
+        const handleInputChange = (index, event) => {
+          const { name, value } = event.target;
+          const newItems = [...items];
+          newItems[index][name] = value;
+          if (name === 'weight' || name === 'value') {
+            if (newItems[index].weight !== '' && newItems[index].value !== '') {
+              newItems[index].output = parseFloat(newItems[index].value) / parseFloat(newItems[index].weight);
+            } else {
+              newItems[index].output = '';
+            }
+          }
+          setItems(newItems);
+        };
+
+        const addItem = () => {
+          setItems([...items, { weight: '', value: '', output: '' }]);
+        };
+
+        const valueToWeightRatio = (value, weight) => {
+          if (weight === 0) return 0;
+          return value / weight;
+        };
+
+        const calculate = () => {
+          let sortedItems = [...items].sort((a, b) => valueToWeightRatio(b.value, b.weight) - valueToWeightRatio(a.value, a.weight));
+          let totalValue = 0;
+          let totalWeight = 0;
+          let selectedItems = [];
+
+          for (let i = 0; i < sortedItems.length; i++) {
+            if (totalWeight + parseFloat(sortedItems[i].weight) <= givenWeight) {
+              totalValue += parseFloat(sortedItems[i].value);
+              totalWeight += parseFloat(sortedItems[i].weight);
+              selectedItems.push(`Item ${i + 1} (100%)`);
+            } else {
+              let remainingWeight = givenWeight - totalWeight;
+              let fraction = remainingWeight / parseFloat(sortedItems[i].weight);
+              totalValue += parseFloat(sortedItems[i].value) * fraction;
+              selectedItems.push(`Item ${i + 1} (${(fraction * 100).toFixed(2)}%)`);
+              break;
+            }
+          }
+
+          document.getElementById('result').innerHTML = `Maximum value: ${totalValue.toFixed(2)}<br>Selected items: ${selectedItems.join(', ')}`;
+        };
+
+        const clearAllItems = () => {
+          setItems([{ weight: '', value: '', output: '' }]);
+        };
+
+        return (
+          <div>
+            <h3 style={{ color: 'white' }}>
+              Enter the data in the table given below. The maximum weight is {givenWeight}.
+            </h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Weight</th>
+                  <th>Value</th>
+                  <th>Output</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item, index) => (
+                  <tr key={index}>
+                    <td>
+                      {index + 1}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        name="weight"
+                        value={item.weight}
+                        onChange={(event) => handleInputChange(index, event)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        name="value"
+                        value={item.value}
+                        onChange={(event) => handleInputChange(index, event)}
+                      />
+                    </td>
+                    <td>
+                      {item.output !== '' ? item.output.toFixed(2) : ''}
+                    </td>
+                    <td>
+                      <button className="delete-btn" onClick={() => {
+                        const newItems = [...items];
+                        newItems.splice(index, 1);
+                        setItems(newItems);
+                      }}>X</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="taskbar">
+              <button onClick={addItem}>Add Item</button>
+              &nbsp; &nbsp;
+              <button onClick={calculate}>Calculate</button>
+              &nbsp; &nbsp;
+              <button onClick={clearAllItems}>Clear All</button>
+            </div>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    }
+  </script>
+</body>
+</html>
