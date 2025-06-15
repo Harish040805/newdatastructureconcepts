@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	 <link rel="stylesheet" type="text/css" href="dijkstrasalgorithmsimulationcss.css">
+    <title>Dijkstra's Algorithm Simulation</title>
+</head>
+<body>
+<!--
+	
+/* Dijkstra's Algorithm Simulation */
+/* Created by HARISH */	
+/* DATA SCIENCE CONCEPT */	
+
+-->
+<script>
+const iframe = document.createElement('iframe');
+iframe.style.position = 'fixed';
+iframe.style.top = '0';
+iframe.style.left = '0';
+iframe.style.width = '100%';
+iframe.style.height = '100%';
+iframe.style.zIndex = '9999';
+iframe.style.border = 'none';
+
+const iframeContent = `
+  <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #8a2828;
+          text-align: center;
+          margin-top: 20%;
+        }
+        h1 {
+          color: #fff;
+        }
+        button {
+          background-color: #b83a3a;
+          color: #fff;
+          border: none;
+          padding: 10px 20px;
+          font-size: 16px;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        button:hover {
+          background-color: #a73434;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Dijkstra's Algorithm Problem Solver</h1>
+      <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">Enter</button>
+    </body>
+  </html>
+`;
+
+iframe.srcdoc = iframeContent;
+document.body.appendChild(iframe);
+</script>
+<div id="notification" class="notification">
+  <div class="notification-title">Notification</div>
+  <div class="notification-message">
+  <br>
+		* To use edges, first create at least two vertices <br>
+		* To enable the Edge Mode, click the Edge Button once. To disable it, click it once again. <br>
+		* The edge button is exclusively to create edges. When you enable the Edge Mode, you can't move the vertices freely until disabling it. <br>
+		* For weighted graph analysis, ensure that you have created the complete graph diagram before clicking the Weight button to input edge weights.<br>
+  </div>
+  <button class="notification-close">OK</button>
+</div>
+<div class="container">
+<div id="main-content" style="width: 80%; height: 100%; float: left;">
+    <center>
+        <h1>Dijkstra's Algorithm Simulation</h1>
+        <canvas id="canvas" width="800" height="400"></canvas>
+        <div class="button-container">
+            <button id="vertex-btn">Vertex</button>
+            <button id="edge-btn">Edge</button>
+            <button id="undo-btn">Undo</button>
+            <button id="reset-btn">Reset</button>
+			<button id="delete-btn">Delete</button>
+			<button id="weight-btn">Weight</button>
+			<button id="solve-btn">Solve</button>
+        </div>
+        <div id="solution-container"></div>
+    </center>
+	
+<script>
+.notification {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  display: none;
+}
+
+.notification.hide {
+  animation: fade-out 1s forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+</script>
+	
+    <script>
+window.onload = function() {
+  const notification = document.getElementById('notification');
+  notification.classList.add('show');
+  notification.style.display = 'block';
+};
+
+document.querySelector('.notification-close').addEventListener('click', function() {
+  const notification = document.getElementById('notification');
+  notification.classList.remove('show');
+  notification.classList.add('hide');
+  setTimeout(function() {
+    notification.style.display = 'none';
+    notification.classList.remove('hide');
+  }, 30);
+});
+
+let graph = {
+    vertices: [],
+    edges: [],
+};
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let draggingVertex = null;
+let offsetX = 0;
+let offsetY = 0;
+
+let isEdgeMode = false;
+let edgeFromVertex = null;
+
+let history = [];
+let historyIndex = -1;
+
+function drawGraph() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    graph.vertices.forEach((vertex) => {
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = '#b83a3a';
+        ctx.fill();
+
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'black';
+        ctx.fillText(vertex.label, vertex.x, vertex.y);
+    });
+
+    graph.edges.forEach((edge) => {
+        ctx.beginPath();
+        ctx.moveTo(edge.from.x, edge.from.y);
+        ctx.lineTo(edge.to.x, edge.to.y);
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+
+        if (isWeightMode && edge.weight) {
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'black';
+            ctx.fillText(edge.weight, (edge.from.x + edge.to.x) / 2, (edge.from.y + edge.to.y) / 2);
+        }
+    });
+}
+
+setInterval(drawGraph, 100);
+
+canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    graph.vertices.forEach((vertex) => {
+        if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
+            draggingVertex = vertex;
+            offsetX = x - vertex.x;
+            offsetY = y - vertex.y;
+            saveHistory();
+        }
+    });
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (draggingVertex) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        draggingVertex.x = x - offsetX;
+        draggingVertex.y = y - offsetY;
+
+        saveHistory();
+    }
+
+    if (isEdgeMode && edgeFromVertex) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGraph();
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        ctx.beginPath();
+        ctx.moveTo(edgeFromVertex.x, edgeFromVertex.y);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+    }
+});
+
+canvas.addEventListener('mouseup', (e) => {
+    draggingVertex = null;
+});
+
+canvas.addEventListener('click', (e) => {
+    if (isEdgeMode) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        graph.vertices.forEach((vertex) => {
+            if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
+                if (!edgeFromVertex) {
+                    edgeFromVertex = vertex;
+                } else {
+                    graph.edges.push({ from: edgeFromVertex, to: vertex });
+                    edgeFromVertex = null;
+                }
+                saveHistory();
+            }
+        });
+    }
+});
+
+document.getElementById('edge-btn').addEventListener('click', () => {
+    isEdgeMode = !isEdgeMode;
+    saveHistory();
+});
+
+document.getElementById('vertex-btn').addEventListener('click', () => {
+    const rect = canvas.getBoundingClientRect();
+    const x = rect.width / 2;
+    const y = rect.height / 2;
+
+    const label = prompt("Enter vertex label:");
+    graph.vertices.push({ x, y, label: label });
+
+    saveHistory();
+});
+
+function saveHistory() {
+    historyIndex++;
+    history = history.slice(0, historyIndex);
+    const graphState = {
+        vertices: graph.vertices.map((vertex) => ({
+            x: vertex.x,
+            y: vertex.y,
+            label: vertex.label,
+        })),
+        edges: graph.edges.map((edge) => ({
+            from: graph.vertices.indexOf(edge.from),
+            to: graph.vertices.indexOf(edge.to),
+        })),
+    };
+    history.push(graphState);
+}
+
+document.getElementById('undo-btn').addEventListener('click', () => {
+    if (historyIndex > 0) {
+        historyIndex--;
+        const graphState = history[historyIndex];
+        graph.vertices = graphState.vertices.map((vertex) => ({
+            x: vertex.x,
+            y: vertex.y,
+            label: vertex.label,
+        }));
+        graph.edges = graphState.edges.map((edge) => ({
+            from: graph.vertices[edge.from],
+            to: graph.vertices[edge.to],
+        }));
+    }
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    history = [];
+    historyIndex = -1;
+    graph = { vertices: [], edges: [] };
+});
+
+let selectedVertex = null;
+
+canvas.addEventListener('click', (e) => {
+    if (!isEdgeMode) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        graph.vertices.forEach((vertex) => {
+            if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
+                selectedVertex = vertex;
+            }
+        });
+    }
+});
+
+document.getElementById('delete-btn').addEventListener('click', () => {
+    if (selectedVertex) {
+        const index = graph.vertices.indexOf(selectedVertex);
+        if (index !== -1) {
+            graph.vertices.splice(index, 1);
+            graph.edges = graph.edges.filter((edge) => edge.from !== selectedVertex && edge.to !== selectedVertex);
+            selectedVertex = null;
+            saveHistory();
+        }
+    }
+});
+
+let isWeightMode = false;
+
+document.getElementById('weight-btn').addEventListener('click', () => {
+    isWeightMode = !isWeightMode;
+    const weightContent = document.getElementById('weight-content');
+    if (isWeightMode) {
+        weightContent.innerHTML = '';
+        graph.edges.forEach((edge, index) => {
+            const weightInput = document.createElement('input');
+            weightInput.type = 'number';
+            weightInput.value = edge.weight || 0;
+            weightInput.style.width = '100%';
+            weightInput.style.height = '30px';
+            weightInput.placeholder = `Edge ${edge.from.label} -> ${edge.to.label}`;
+            weightContent.appendChild(weightInput);
+            weightContent.appendChild(document.createElement('br'));
+
+            weightInput.addEventListener('input', () => {
+                edge.weight = parseInt(weightInput.value);
+            });
+        });
+    } else {
+        weightContent.innerHTML = '';
+    }
+});
+
+function dijkstra(graph, startVertexLabel) {
+    const startVertex = graph.vertices.find((vertex) => vertex.label === startVertexLabel);
+    if (!startVertex) {
+        alert("Invalid start vertex label");
+        return;
+    }
+
+    const distances = {};
+    const previousVertices = {};
+
+    graph.vertices.forEach((vertex) => {
+        distances[vertex.label] = Infinity;
+        previousVertices[vertex.label] = null;
+    });
+
+    distances[startVertexLabel] = 0;
+
+    const priorityQueue = [...graph.vertices];
+
+    while (priorityQueue.length > 0) {
+        priorityQueue.sort((a, b) => distances[a.label] - distances[b.label]);
+        const currentVertex = priorityQueue.shift();
+
+        graph.edges.forEach((edge) => {
+            if (edge.from === currentVertex) {
+                const neighbor = edge.to;
+                const distance = distances[currentVertex.label] + (edge.weight || 0);
+
+                if (distance < distances[neighbor.label]) {
+                    distances[neighbor.label] = distance;
+                    previousVertices[neighbor.label] = currentVertex.label;
+                }
+            } else if (edge.to === currentVertex) {
+                const neighbor = edge.from;
+                const distance = distances[currentVertex.label] + (edge.weight || 0);
+
+                if (distance < distances[neighbor.label]) {
+                    distances[neighbor.label] = distance;
+                    previousVertices[neighbor.label] = currentVertex.label;
+                }
+            }
+        });
+    }
+
+    return { distances, previousVertices };
+}
+
+document.getElementById('solve-btn').addEventListener('click', () => {
+    const startVertexLabel = prompt("Enter the starting vertex label:");
+    if (startVertexLabel) {
+        const result = dijkstra(graph, startVertexLabel);
+        displayDijkstraResult(result, startVertexLabel);
+    } else {
+        alert("Please enter a starting vertex label.");
+    }
+});
+
+function displayDijkstraResult(result, startVertexLabel) {
+    const solutionContainer = document.getElementById('solution-container');
+    solutionContainer.innerHTML = '';
+
+    graph.vertices.forEach((vertex) => {
+        if (vertex.label !== startVertexLabel) {
+            const path = getPath(result.previousVertices, startVertexLabel, vertex.label);
+            const solutionText = `Shortest path from ${startVertexLabel} to ${vertex.label}: ${path.join('->')} (Distance: ${result.distances[vertex.label]})`;
+            const solutionElement = document.createElement('p');
+            solutionElement.textContent = solutionText;
+            solutionContainer.appendChild(solutionElement);
+        }
+    });
+}
+
+function getPath(previousVertices, startVertexLabel, endVertexLabel) {
+    const path = [];
+    let currentVertexLabel = endVertexLabel;
+
+    while (currentVertexLabel !== null) {
+        path.unshift(currentVertexLabel);
+        currentVertexLabel = previousVertices[currentVertexLabel];
+    }
+
+    return path;
+}
+</script>
+</div>
+<div id="weight-content" style="width: 20%; height: 100%; float: right; overflow-y: auto;">
+</div>
+</div>
+</body>
+</html>
