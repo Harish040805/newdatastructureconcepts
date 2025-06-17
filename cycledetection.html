@@ -4,10 +4,175 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cycle Detection</title>
-    <link rel="stylesheet" type="text/css" href="pathcss.css">
-</head>
-<body>
-<script>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8fff6;
+}
+
+.container {
+    width: 100%;
+    height: 95vh;
+}
+
+#canvas {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    border-collapse: collapse;
+    background-color: #f0f0f0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+}
+
+.button-container {
+    margin-top: 20px;
+    background-color: #32cd32;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+button {
+    color: #000;
+    background-color: #7fff00;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+button:hover {
+    background-color: #78f100;
+}
+
+h1 {
+    color: #32cd32;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #48cb4c;
+    color: #fff;
+}
+
+td {
+    background-color: #fff;
+}
+
+input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+#main-content > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 20px 0;
+}
+
+.notification {
+  position: fixed;
+  top: 25% !important;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 1px solid #bbb;
+  padding: 20px;
+  width: 410px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  animation: fade-in 0.3s forwards;
+  display: none;
+  border-radius: 15px;
+}
+.notification.hide {
+  animation: fade-out 0.3s forwards;
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.notification-title {
+  font-weight: bold;
+  font-size: 15.5px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #000;
+}
+.notification-message {
+  font-size: 13.5px;
+  margin-bottom: 20px;
+}
+.notification-close {
+  background-color: #7a288a;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.notification-close:hover {
+  background-color: #8b3ab8;
+}
+
+@media (max-width: 768px) {
+    #main-content > div:first-child {
+        flex-direction: column;
+        align-items: center;
+    }
+    table {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    button {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin: 0 5px;
+    }
+    .button-container {
+        padding: 5px;
+    }
+}
+
+@media (max-width: 320px) {
+    button {
+        padding: 4px 8px;
+        font-size: 10px;
+        margin: 0 2px;
+    }
+}
+
 .notification {
   position: fixed;
   top: 20%;
@@ -45,7 +210,9 @@
   }
 }
 
-</script>	
+</style>
+</head>
+<body>
 <script>
 const iframe = document.createElement('iframe');
 iframe.style.position = 'fixed';
@@ -145,6 +312,18 @@ document.body.appendChild(iframe);
     </div>
     </center>
     <script>
+const notificationBox = document.querySelector('.notification');
+const notificationCloseButton = document.querySelector('.notification-close');
+
+notificationBox.style.display = 'block';
+
+notificationCloseButton.addEventListener('click', () => {
+    notificationBox.classList.add('hide');
+    setTimeout(() => {
+        notificationBox.style.display = 'none';
+    }, 300);
+});
+	
         let graph = {
             vertices: [],
             edges: [],
