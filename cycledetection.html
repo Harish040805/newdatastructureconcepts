@@ -8,6 +8,45 @@
 </head>
 <body>
 <script>
+.notification {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  display: none;
+}
+
+.notification.hide {
+  animation: fade-out 1s forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+</script>	
+<script>
 const iframe = document.createElement('iframe');
 iframe.style.position = 'fixed';
 iframe.style.top = '0';
