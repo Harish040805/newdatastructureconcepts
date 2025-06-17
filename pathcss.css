@@ -79,6 +79,63 @@ input[type="checkbox"] {
     margin: 20px 0;
 }
 
+.notification {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 1px solid #bbb;
+  padding: 20px;
+  width: 410px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  animation: fade-in 0.3s forwards;
+  display: none;
+  border-radius: 15px;
+}
+.notification.hide {
+  animation: fade-out 0.3s forwards;
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.notification-title {
+  font-weight: bold;
+  font-size: 15.5px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #000;
+}
+.notification-message {
+  font-size: 13.5px;
+  margin-bottom: 20px;
+}
+.notification-close {
+  background-color: #7a288a;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.notification-close:hover {
+  background-color: #8b3ab8;
+}
+
 @media (max-width: 768px) {
     #main-content > div:first-child {
         flex-direction: column;
