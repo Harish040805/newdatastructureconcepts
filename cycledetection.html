@@ -132,15 +132,15 @@ input[type="checkbox"] {
   margin-bottom: 20px;
 }
 .notification-close {
-  background-color: #7a288a;
-  color: #fff;
+  background-color: #7fff00;
+  color: #000;
   padding: 10px 20px;
   border: none;
   border-radius: 10px;
   cursor: pointer;
 }
 .notification-close:hover {
-  background-color: #8b3ab8;
+  background-color: #78f100;
 }
 
 @media (max-width: 768px) {
@@ -178,7 +178,7 @@ input[type="checkbox"] {
   top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #ddd;
+  background-color: #f8fff6;
   border: 1px solid #ccc;
   padding: 20px;
   width: 600px;
@@ -305,6 +305,7 @@ document.body.appendChild(iframe);
                     <button id="edge-btn">Edge</button>
                     <button id="undo-btn">Undo</button>
                     <button id="reset-btn">Reset</button>
+                    <button id="delete-btn">Delete</button>
                     <button id="solve-btn">Solve</button>
                 </div>
                 </div>                
@@ -510,6 +511,20 @@ document.getElementById('reset-btn').addEventListener('click', () => {
     graph = { vertices: [], edges: [] };
 });
 
+document.getElementById('delete-btn').addEventListener('click', () => {
+    if (isEdgeMode && edgeFromVertex) {
+        graph.edges = graph.edges.filter(edge => edge.from !== edgeFromVertex && edge.to !== edgeFromVertex);
+        edgeFromVertex = null;
+    } else {
+        const selectedVertex = graph.vertices.find(vertex => Math.hypot(event.clientX - vertex.x, event.clientY - vertex.y) < 20);
+        if (selectedVertex) {
+            graph.vertices = graph.vertices.filter(vertex => vertex !== selectedVertex);
+            graph.edges = graph.edges.filter(edge => edge.from !== selectedVertex && edge.to !== selectedVertex);
+        }
+    }
+    saveHistory();
+});
+
 document.getElementById('solve-btn').addEventListener('click', () => {
     const edges = graph.edges.map((edge) => [
         graph.vertices.indexOf(edge.from),
@@ -617,7 +632,6 @@ function isEulerianCircuit(V, edges) {
         if (outDegree[i] !== inDegree[i]) return false;
     }
 
-    // Check if the graph is strongly connected
     let visited = new Array(V).fill(false);
     function dfs(u) {
         visited[u] = true;
