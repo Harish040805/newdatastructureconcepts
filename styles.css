@@ -1,0 +1,51 @@
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .btn {
+            background-color: #555;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #777;
+        }
+        h1, h3 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+@media only screen and (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+}
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid #444;
+}
