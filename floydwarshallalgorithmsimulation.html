@@ -68,6 +68,27 @@ document.body.appendChild(iframe);
 			<button id="delete-btn">Delete</button>
 			<button id="weight-btn">Weight</button>
 			<button id="solve-btn">Solve</button>
+<button id="about">About</button>
+<div class="about-iframe-overlay" id="about-iframe-overlay">
+    <div class="about-iframe-container">
+        <iframe srcdoc="<html><body>Hello</body></html>" frameborder="0" width="100%" height="100%"></iframe>
+        <span class="about-close-btn" id="about-close-btn">&times;</span>
+    </div>
+</div>
+
+<script>
+    const aboutBtn = document.getElementById('about');
+    const aboutIframeOverlay = document.getElementById('about-iframe-overlay');
+    const aboutCloseBtn = document.getElementById('about-close-btn');
+
+    aboutBtn.addEventListener('click', () => {
+        aboutIframeOverlay.style.display = 'block';
+    });
+
+    aboutCloseBtn.addEventListener('click', () => {
+        aboutIframeOverlay.style.display = 'none';
+    });
+</script>
         </div>
         <div id="solution-container"></div>
     </center>
