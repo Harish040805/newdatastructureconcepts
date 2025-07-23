@@ -73,10 +73,19 @@ document.body.appendChild(iframe);
     <div class="about-iframe-container">
         <iframe srcdoc="
 <html>
-	<body>
-		<p class="coloro">
-		Floyd Warshall's Algorithm <br>
-A dynamic programming approach to find the shortest path between all pairs of vertices in a weighted graph. <br>
+  <head>
+    <style>
+      .coloro {
+        color: white;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body style='background-color: #7a288a; padding: 10px;'>
+    <p class='coloro'>
+      Floyd Warshall's Algorithm <br>
+      A dynamic programming approach to find the shortest path between all pairs of vertices in a weighted graph. <br>
 How it works: <br>
 Create a matrix to store the shortest distances between vertices. <br>
 Initialize the matrix with direct edge weights or infinity for non-adjacent vertices. <br>
@@ -84,10 +93,10 @@ Iterate through all vertices, updating the shortest distances by considering eac
 The final matrix contains the shortest distances between all pairs of vertices. <br>
 Time complexity: O(V^3), where V is the number of vertices. <br>
 Use cases: Network routing, traffic optimization, and finding shortest paths in complex graphs. <br>
-		</p>
-	</body>
-</html>" 
-frameborder="0" width="100%" height="100%"></iframe>
+    </p>
+  </body>
+</html>
+" frameborder="0" width="100%" height="100%"></iframe>
         <span class="about-close-btn" id="about-close-btn">&times;</span>
     </div>
 </div>
