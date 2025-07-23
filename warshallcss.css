@@ -1,10 +1,11 @@
-        body {
-            font-family: Arial, sans-serif;
-			background-color: #e1f5fe;
-			padding: 20px;
-            margin: 0;
-				font-size: 16px;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e1f5fe;
+    padding: 20px;
+    margin: 0;
+    font-size: 16px;
+}
+
 .about-iframe-overlay {
     position: fixed;
     top: 0;
@@ -13,66 +14,79 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     display: none;
+    z-index: 2000;
 }
 
 .about-iframe-container {
     width: 100%;
     height: 100%;
+    position: relative;
 }
 
 .about-close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 24px;
+    font-size: 30px;
+    cursor: pointer;
+    color: white;
+    user-select: none;
+    z-index: 2100;
+}
+
+@media only screen and (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    body {
+        font-size: 12px;
+    }
+}
+
+.matrix-input {
+    margin-bottom: 20px;
+}
+
+.matrix-input input[type="number"] {
+    width: 50px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #81d4fa;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.overlay button {
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    background-color: #b3f5ec;
+    color: #000000; 
     cursor: pointer;
 }
-@media only screen and (max-width: 768px) {
-  body {
-    font-size: 14px;
-  }
+
+.overlay button:hover {
+    background-color: #e1f5fe;
 }
-@media only screen and (max-width: 480px) {
-  body {
-    font-size: 12px;
-  }
+
+.container {
+    padding: 20px;
+    margin: 20px;
 }
-        .matrix-input {
-            margin-bottom: 20px;
-        }
-        .matrix-input input[type="number"] {
-            width: 50px;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #81d4fa;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .overlay button {
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 5px; 
-            background-color: #b3f5ec;
-            color: #000000; 
-            cursor: pointer;
-        }
-        .overlay button:hover {
-            background-color: #e1f5fe;
-        }
-		
-		.container {
-			padding: 20px;
-			margin: 20px;
-		}
-		input[type="number"] {
+
+input[type="number"] {
     padding: 10px;
     margin: 5px;
     border: 1px solid #ccc;
@@ -95,13 +109,14 @@ button:hover {
 
 .menu-bar {
     position: fixed;
-    bottom: 0;
+    bottom: 60px;
     left: 0;
     width: 100%;
     background-color: #b3f5ec;
     padding: 10px;
     text-align: center;
     border-top: 1px solid #ccc;
+    z-index: 900;
 }
 
 .menu-bar button {
@@ -115,4 +130,46 @@ button:hover {
 
 .menu-bar button:hover {
     background-color: #65d6c4;
+}
+
+#taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #7a288a;
+    padding: 8px 15px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#taskbar input[type="number"] {
+    width: 140px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+}
+
+#taskbar button {
+    padding: 7px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    background-color: #5d1a74;
+    transition: background-color 0.3s ease;
+}
+
+#taskbar button:hover {
+    background-color: #3e0e4e;
+}
+
+#root {
+    padding-bottom: 100px;
 }
