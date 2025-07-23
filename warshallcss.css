@@ -137,7 +137,7 @@ button:hover {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #7a288a;
+    background-color: #97ddfb;
     padding: 8px 15px;
     box-sizing: border-box;
     display: flex;
@@ -162,12 +162,12 @@ button:hover {
     cursor: pointer;
     font-weight: bold;
     color: white;
-    background-color: #5d1a74;
+    background-color: #b3f5ec;
     transition: background-color 0.3s ease;
 }
 
 #taskbar button:hover {
-    background-color: #3e0e4e;
+    background-color: #87e0d1;
 }
 
 #root {
