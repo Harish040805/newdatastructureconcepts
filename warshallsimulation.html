@@ -10,7 +10,72 @@
 <center>
 	<h1>Warshall Algorithm Simulation</h1>
 </center>
-    <div id="root"></div>
+  <div id="root"></div>
+  <!-- Bottom Taskbar -->
+  <div id="taskbar">
+    <input
+      type="number"
+      id="vertices-input"
+      placeholder="Number of Vertices"
+      min="1"
+      autocomplete="off"
+    />
+    <button id="create-matrix-btn">Create Matrix</button>
+    <button id="about">About</button>
+  </div>
+
+  <div class="about-iframe-overlay" id="about-iframe-overlay" style="display:none;">
+    <div class="about-iframe-container">
+      <iframe
+        srcdoc="
+<html>
+  <head>
+    <style>
+      .coloro {
+        color: white;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body style='background-color: #7a288a; padding: 20px;'>
+    <p class='coloro'>
+      <b>Warshall’s Algorithm (Transitive Closure)</b>
+      <br><br>
+      This interactive simulation allows users to explore Warshall's Algorithm, which is used to compute the transitive closure of a directed graph represented as an adjacency matrix.
+      <br><br>
+      <b>How it works:</b>
+      <br><br>
+      * Initially, an overlay prompts the user to begin the simulation.<br>
+      * The user enters the number of vertices in the graph (only 0 or 1).<br>
+      * 0 represents that there is no outgoing edge and 1 represents there is a outgoing edge from the vertx.<br>
+      * A matrix input interface is generated where each cell accepts 0 or 1 (indicating absence or presence of an edge).<br>
+      * Upon clicking “Calculate Transitive Closure”, the matrix is updated using Warshall’s algorithm logic:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;- For each intermediate vertex k, it checks all pairs (i, j).<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;- If a path exists from i to k and from k to j, a path from i to j is established.<br>
+      * The result is displayed below as the transitive closure matrix.
+      <br><br>
+      <b>Time complexity:</b><br>
+      O(V³), where V is the number of vertices.
+      <br><br>
+      <b>Use cases:</b><br>
+      * Reachability analysis<br>
+      * Program dependency graphs<br>
+      * Database query optimization<br>
+      * Logic inference systems
+    </p>
+  </body>
+</html>
+"
+        frameborder="0"
+        width="100%"
+        height="100%"
+      ></iframe>
+
+      <span class="about-close-btn" id="about-close-btn" style="cursor:pointer; font-size: 30px; position: absolute; top: 5px; right: 15px; color: white;">&times;</span>
+    </div>
+  </div>
+
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -132,5 +197,14 @@ const calculateTransitiveClosure = () => {
             document.getElementById('root')
         );
     </script>
+<script>
+  document.getElementById("about").onclick = function () {
+    document.getElementById("about-iframe-overlay").style.display = "block";
+  };
+
+  document.getElementById("about-close-btn").onclick = function () {
+    document.getElementById("about-iframe-overlay").style.display = "none";
+  };
+</script>	
 </body>
 </html>
