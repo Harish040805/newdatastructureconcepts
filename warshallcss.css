@@ -29,7 +29,6 @@ body {
     right: 10px;
     font-size: 30px;
     cursor: pointer;
-    color: white;
     user-select: none;
     z-index: 2100;
 }
