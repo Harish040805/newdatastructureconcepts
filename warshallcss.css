@@ -161,7 +161,6 @@ button:hover {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    color: white;
     background-color: #b3f5ec;
     transition: background-color 0.3s ease;
 }
