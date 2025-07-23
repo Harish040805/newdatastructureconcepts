@@ -39,6 +39,11 @@ body {
     cursor: pointer;
     color: black;
     background-color: red;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
 }
 .notification {
   position: fixed;
