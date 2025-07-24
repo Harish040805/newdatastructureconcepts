@@ -202,14 +202,3 @@ input[type="checkbox"] {
     opacity: 0;
   }
 }
-.abtcycdet{
-    position: fixed; 
-    bottom: 80px; 
-    left: 20px; 
-    z-index: 1000; 
-    padding: 10px 20px; 
-    background-color: #FFD700; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer;
-}
