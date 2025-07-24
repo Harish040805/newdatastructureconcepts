@@ -11,12 +11,10 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     display: none;
 }
-
 .about-iframe-container {
     width: 100%;
     height: 100%;
 }
-
 .about-close-btn {
     position: absolute;
     top: 10px;
@@ -203,4 +201,15 @@ input[type="checkbox"] {
   100% {
     opacity: 0;
   }
+}
+.abtcycdet{
+    position: fixed; 
+    bottom: 80px; 
+    left: 20px; 
+    z-index: 1000; 
+    padding: 10px 20px; 
+    background-color: #FFD700; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer;
 }
