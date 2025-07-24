@@ -70,9 +70,8 @@ document.body.appendChild(iframe);
 			<button id="weight-btn">Weight</button>
 			<button id="solve-btn">Solve</button>
 <button id="about">About</button>
-<div class="about-iframe-overlay" id="aboutOverlay">
-  <div class="about-iframe-container">
-    <span class="about-close-btn" onclick="closeAbout()">×</span>
+<div class="about-iframe-overlay" id="about-iframe-overlay">
+    <div class="about-iframe-container">
         <iframe srcdoc="
 <html>
   <head>
@@ -128,9 +127,6 @@ document.body.appendChild(iframe);
     aboutCloseBtn.addEventListener('click', () => {
         aboutIframeOverlay.style.display = 'none';
     });
-function closeAbout() {
-  document.getElementById('aboutOverlay').style.display = 'none';
-}
 </script>
         </div>
         <div id="solution-container"></div>
