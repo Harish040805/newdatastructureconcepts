@@ -86,14 +86,29 @@ document.body.appendChild(iframe);
     <p class='coloro'>
       <b>Floyd Warshall's Algorithm</b> 
 <br><br>
-      A dynamic programming approach to find the shortest path between all pairs of vertices in a weighted graph. <br><br>
-How it works: <br><br>
-* Create a matrix to store the shortest distances between vertices. <br>
-* Initialize the matrix with direct edge weights or infinity for non-adjacent vertices. <br>
-* Iterate through all vertices, updating the shortest distances by considering each vertex as an intermediate node. <br>
-* The final matrix contains the shortest distances between all pairs of vertices. <br><br>
-Time complexity: O(V^3), where V is the number of vertices. <br>
-Use cases: Network routing, traffic optimization, and finding shortest paths in complex graphs. <br>
+      This tool allows you to visualize and understand the Floyd Warshall algorithm, a dynamic programming approach to find the shortest path between all pairs of vertices in a weighted graph.
+      <br><br>
+      <b>How to use this site:</b>
+      <br>
+      1. Click the "Vertex" button to create a new vertex. Enter a label for the vertex in the alert message when prompted.
+      <br>
+      2. Click the "Edge" button to enable edge mode. Then, click on two vertices to create an edge between them. Click the edge button once again to turn it off.
+      <br>
+      3. Use the "Undo" and "Reset" buttons to manage your graph. The "Reset" button resets your entire graph. Be careful in using it. 
+      <br>
+      4. Click the "Solve" button to run the Floyd Warshall algorithm and find the shortest paths.
+      <br>
+      5. To assign weights to edges, click the "Weight" button and enter the weights in the input fields that appear.
+      <br>
+      6. To delete a vertex, select it by clicking on it, then click the "Delete" button.
+      <br><br>
+      <b>About Floyd Warshall Algorithm:</b>
+      <br>
+      The Floyd Warshall algorithm is a dynamic programming approach that finds the shortest path between all pairs of vertices in a weighted graph. It works by iteratively improving the shortest path between each pair of vertices, considering all possible intermediate vertices.
+      <br><br>
+      Time complexity: O(V^3), where V is the number of vertices.
+      <br>
+      Use cases: Network routing, traffic optimization, and finding shortest paths in complex graphs.
     </p>
   </body>
 </html>
