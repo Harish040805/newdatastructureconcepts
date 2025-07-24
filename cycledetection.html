@@ -101,11 +101,50 @@ document.body.appendChild(iframe);
                     <button id="reset-btn">Reset</button>
                     <button id="delete-btn">Delete</button>
                     <button id="solve-btn">Solve</button>
+<button onclick="toggleCycleAbout()">About</button>
                 </div>
                 </div>                
         </div>
     </div>
     </center>
+
+<!-- Overlay Container -->
+<div id="cycleAboutOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 999;">
+  <div style="color: white; font-family: Arial, sans-serif; line-height: 1.6; max-width: 700px; margin: 60px auto; padding: 30px; background-color: rgba(0,0,0,0.7); border-radius: 10px; position: relative;">
+
+    <span onclick="toggleCycleAbout()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
+
+    <h2 style="color: white;">What is Cycle Detection in Directed Graphs?</h2>
+    <p>
+      Cycle detection in directed graphs involves determining whether a path exists in which the starting and ending vertices are the same, and the path follows the direction of the edges. In other words, it's used to detect if there is a loop in a directed graph.
+    </p>
+
+    <h2 style="color: white;">How Does It Work?</h2>
+    <p>
+      The most common approach to detect a cycle in a directed graph is by using Depth-First Search (DFS) while maintaining a recursion stack. If during the traversal we visit a node that is already in the current recursion path, it indicates the presence of a cycle.
+    </p>
+
+    <h2 style="color: white;">Why is Cycle Detection Important?</h2>
+    <p>
+      Cycle detection is crucial in many applications, such as scheduling, deadlock detection in operating systems, and verifying the validity of dependency graphs. Detecting cycles helps prevent logical errors and ensures reliable system behavior.
+    </p>
+
+    <h2 style="color: white;">Use Case in Graph Tools</h2>
+    <p>
+      In visual graph tools like the one shown above, users can draw directed edges between vertices. The system then evaluates whether a cycle exists based on the structure provided. The result is often shown via a checkbox or status label indicating the presence of a cycle.
+    </p>
+    
+  </div>
+</div>
+
+<!-- JavaScript Toggle Function -->
+<script>
+  function toggleCycleAbout() {
+    const overlay = document.getElementById('cycleAboutOverlay');
+    overlay.style.display = (overlay.style.display === 'none' || overlay.style.display === '') ? 'block' : 'none';
+  }
+</script>
+
     <script>
 const notificationBox = document.querySelector('.notification');
 const notificationCloseButton = document.querySelector('.notification-close');
