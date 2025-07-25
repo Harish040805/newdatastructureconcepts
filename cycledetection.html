@@ -107,30 +107,53 @@ document.body.appendChild(iframe);
         </div>
     </div>
     </center>
+<!-- 
 
+1. Click the 'Vertex' button to create a new vertex. Enter a label for the vertex in the alert message when prompted.
+2. Click the 'Edge' button to enable edge mode. Then, click on two vertices to create an edge between them. Click the edge button once again to turn it off.
+3. Use the 'Undo' and 'Reset' buttons to manage your graph. The 'Reset' button resets your entire graph. Be careful in using it.
+4. Click the 'Solve' button to run the Floyd Warshall algorithm and find the shortest paths.
+5. To assign weights to edges, click the'Weight' button and enter the weights in the input fields that appear.
+6. To delete a vertex, select it by clicking on it, then click the 'Delete' button.
+	-->
 <!-- Overlay Container -->
 <div id="cycleAboutOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #78f100; z-index: 999;>
   <div style="color: white; font-family: Arial, sans-serif; line-height: 1.6; max-width: 700px; margin: 60px auto; padding: 30px; background-color: rgba(0,0,0,0.7); border-radius: 10px; position: relative;">
 
     <span onclick="toggleCycleAbout()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">&times;</span>
 
-    <h2 style="color: white;">What is Cycle Detection in Directed Graphs?</h2>
+    <h2 class="whitee"> What is Cycle Detection in Directed Graphs?</h2>
     <p style="color: white;">
       Cycle detection in directed graphs involves determining whether a path exists in which the starting and ending vertices are the same, and the path follows the direction of the edges. In other words, it's used to detect if there is a loop in a directed graph.
     </p>
 
-    <h2 style="color: white;">How Does It Work?</h2>
+    <h2 class="whitee">How Does It Work?</h2>
     <p style="color: white;">
       The most common approach to detect a cycle in a directed graph is by using Depth-First Search (DFS) while maintaining a recursion stack. If during the traversal we visit a node that is already in the current recursion path, it indicates the presence of a cycle.
     </p>
-
-    <h2 style="color: white;">Why is Cycle Detection Important?</h2>
-    <p style="color: white;">
+    <h2 class="whitee">How to use this site?</h2>
+    <p class="whitee">
+1. Click the 'Vertex' button to create a new vertex. Enter a label for the vertex in the alert message when prompted. <br>
+2. Click the 'Edge' button to enable edge mode. Then, click on two vertices to create an edge between them. Click the edge button once again to turn it off. <br>
+3. Use the 'Undo' and 'Reset' buttons to manage your graph. The 'Reset' button resets your entire graph. Be careful in using it. <br>
+4. Click the 'Solve' button to run the Cycle Detection Simulator and find if your graph contains cycles or not. <br>
+5. You can see your output from the table given on the right side after clicking the Solve button.
+    </p>
+    <h2 class="whitee">Features of this Website</h2>
+    <p class="whitee">
+	    * You can check whether your graph contains cycles <br>
+	    * You can check whether your graph contains Euler's path <br>
+	    * You can check whether your graph contains Euler's circuit <br>
+	    * You can check whether your graph contains Hamiltonian Path <br>
+	    * You can check whether your graph contains Hamiltonian Circuit <br>
+    </p>
+    <h2 class="whitee">Why is Cycle Detection Important?</h2>
+    <p class="whitee">
       Cycle detection is crucial in many applications, such as scheduling, deadlock detection in operating systems, and verifying the validity of dependency graphs. Detecting cycles helps prevent logical errors and ensures reliable system behavior.
     </p>
 
-    <h2 style="color: white;">Use Case in Graph Tools</h2>
-    <p style="color: white;">
+    <h2 class="whitee">Use Case in Graph Tools</h2>
+    <p class="whitee">
       In visual graph tools like the one shown above, users can draw directed edges between vertices. The system then evaluates whether a cycle exists based on the structure provided. The result is often shown via a checkbox or status label indicating the presence of a cycle.
     </p>
     
