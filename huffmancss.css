@@ -1,0 +1,224 @@
+    body {
+      background-color: #0a1f44;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      margin: 20px;
+      padding-bottom: 80px; 
+    }
+    button {
+      background-color: #1e4f91;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    button:hover {
+      background-color: #2566b2;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #102b5a;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      word-break: break-word;
+    }
+    th, td {
+      border: 1px solid #4682b4;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #1e4f91;
+      color: white;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100px;
+      padding: 6px;
+      border: 1px solid #4682b4;
+      border-radius: 4px;
+      background-color: white;
+      color: #0a1f44;
+    }
+    .delete-btn {
+	  width: 115px;
+      padding: 6px;
+      background-color: #d9534f;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .delete-btn:hover {
+      background-color: #c9302c;
+    }
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #1e4f91;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      padding: 14px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    #inputInterface {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      background-color: #102b5a;
+      overflow: hidden;
+      transition: height 0.3s ease;
+      z-index: 999;
+      border-top: 2px solid #4682b4;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+    }
+    #inputInterface.open {
+      height: 50vh;
+    }
+    .input-header, .innernew {
+      background-color: #1e4f91;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      font-size: 16px;
+      border-bottom: 1px solid #4682b4;
+    }
+    .input-header button {
+      background-color: transparent;
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .input-content {
+      padding: 20px;
+      color: white;
+    }
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .input-row label {
+      min-width: 100px;
+      font-weight: bold;
+      color: white;
+    }
+    .input-row input {
+      width: 100px;
+      padding: 6px;
+      border: 1px solid #4682b4;
+      border-radius: 4px;
+      background-color: white;
+      color: #0a1f44;
+    }
+    .add-col-btn {
+      background-color: #1e4f91;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .add-col-btn:hover {
+      background-color: #2566b2;
+    }
+    #encryInterface {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      background-color: #102b5a;
+      overflow: hidden;
+      transition: height 0.3s ease;
+      z-index: 999;
+      border-top: 2px solid #4682b4;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+    }
+    #encryInterface.open {
+      height: 50vh;
+    }
+    #encodeInput,
+    #decodeInput {
+      width: 80%;
+    }
+#infoBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1100;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50%;
+      background-color: #1e4f91;
+      color: white;
+      cursor: pointer;
+    }
+    #iframeOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: none;
+      z-index: 1090;
+    }
+    @media (max-width: 600px) {
+      body {
+        margin: 10px;
+        padding-bottom: 120px;
+      }
+      button {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+      .taskbar {
+        padding: 10px;
+        gap: 6px;
+      }
+      #encodeInput, #decodeInput {
+        width: 100%;
+      }
+      .input-row label {
+        min-width: 90px;
+        font-size: 14px;
+      }
+      input[type="text"], input[type="number"] {
+        width: 70px;
+        padding: 5px;
+        font-size: 14px;
+      }
+      table, th, td {
+        font-size: 14px;
+      }
+      .add-col-btn {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
+    }
