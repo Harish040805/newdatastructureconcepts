@@ -69,50 +69,41 @@ document.body.appendChild(iframe);
     <div class="input-header">
       <span>Input Panel (Fill your inputs in the below field. Use the + button in the right side of this panel to add a new set of inputs and X button to temporily close this panel. After closing the input panel, click the button "Build Huffmann Tree" to see the results.)</span>
 <button id="infoBtn">i</button>
-<iframe id="iframeOverlay" sandbox="allow-scripts allow-same-origin"></iframe>
+<iframe id="iframeOverlay" sandbox="allow-scripts allow-same-origin" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; border:none; z-index:1090;"></iframe>
+
 <script>
   const infoBtn = document.getElementById('infoBtn');
   const iframeOverlay = document.getElementById('iframeOverlay');
 
-const iframeContent = `
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <style>
-      body {
-        margin: 80px;  
-        justify-content: center; 
-        align-items: center; 
-        max-width: 100vw;
-		height: 100vh; 
-        background: #0a1f44; 
-        color: white; 
-        font-family: sans-serif;
-      }
-      .closebutton {
-        position: fixed;
-        top: 30px;
-        left: 20px;
-        background: #d9534f;
-        border: none;
-        color: white;
-        padding: 10px 14px;
-        font-size: 16px;
-        border-radius: 6px;
-        cursor: pointer;
-      }
-#instructions {
-  max-width: 700px;
-  margin: 70px auto 20px;
-}
-    </style>
-  </head>
-  <body>
-    <button class="closebutton" id="closeBtn">Close</button>
-<section id="instructions" style="background:#102b5a; color:white; padding:20px; border-radius:8px; max-width: 2000px; margin: 20px auto; font-family: 'Segoe UI', sans-serif;">
-  <h2>Huffman Algorithm Simulator — Instructions</h2>
-
-  <h3>1. What is the Huffman Algorithm?</h3>
+  const iframeContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <style>
+        body {
+          margin: 40px;
+          font-family: Arial, sans-serif;
+          background-color: #0a1f44;
+          color: white;
+        }
+        .closebutton {
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          background: #d9534f;
+          border: none;
+          color: white;
+          padding: 10px 14px;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 6px;
+        }
+      </style>
+    </head>
+    <body>
+      <button class="closebutton" id="closeBtn">Close</button>
+      <h2>Huffman Algorithm Simulator — Instructions</h2>
+      <h3>1. What is the Huffman Algorithm?</h3>
   <p>
     The Huffman Algorithm is a popular technique used for data compression. It creates a binary tree called a Huffman Tree based on the frequencies of characters in a dataset. Characters that appear more frequently get shorter codes, while less frequent characters get longer codes. This results in efficient encoding of data with fewer bits, minimizing storage space or transmission size.
   </p>
@@ -191,26 +182,24 @@ const iframeContent = `
   }
 </style>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
+ <script>
         document.getElementById('closeBtn').addEventListener('click', () => {
-          window.parent.postMessage('closeIframe', '*');
+          parent.postMessage('closeIframe', '*');
         });
-      });
-    <\/script>
-  </body>
-  </html>
-`;
+      </script>
+    </body>
+    </html>
+  `;
 
   infoBtn.addEventListener('click', () => {
-    iframeOverlay.style.display = 'block';
     iframeOverlay.srcdoc = iframeContent;
+    iframeOverlay.style.display = 'block';
   });
 
   window.addEventListener('message', (event) => {
     if (event.data === 'closeIframe') {
       iframeOverlay.style.display = 'none';
-      iframeOverlay.srcdoc = ''; 
+      iframeOverlay.srcdoc = '';
     }
   });
 </script>
