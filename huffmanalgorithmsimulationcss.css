@@ -201,6 +201,8 @@
       .taskbar {
         padding: 10px;
         gap: 6px;
+        color: #4580e6;
+         background-color: #3a73d5; 
       }
       #encodeInput, #decodeInput {
         width: 100%;
