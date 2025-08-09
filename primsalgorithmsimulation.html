@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kruskal's Algorithm Simulation</title>
+  <style>
+    /* === Pink & White Theme === */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff0f6;
+      font-size: 16px;
+      color: #720026;
+      margin: 0;
+      padding: 0;
+    }
+    .coloro {
+      color: #720026;
+    }
+    @media only screen and (max-width: 768px) {
+      body {
+        font-size: 14px;
+      }
+    }
+    @media only screen and (max-width: 480px) {
+      body {
+        font-size: 12px;
+      }
+    }
+    .about-iframe-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(114, 0, 38, 0.9);
+      display: none;
+      z-index: 10000;
+    }
+    .about-iframe-container {
+      width: 100%; height: 100%;
+      position: relative;
+    }
+    .about-close-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      background-color: #d6336c;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      line-height: 32px;
+      text-align: center;
+      user-select: none;
+    }
+    .about-close-btn:hover {
+      background-color: #a31a47;
+    }
+    .notification {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ffe6f0;
+      border: 1px solid #d6336c;
+      padding: 20px;
+      width: 420px;
+      box-shadow: 0 0 15px rgba(214, 51, 108, 0.4);
+      opacity: 0;
+      animation: fade-in 0.3s forwards;
+      display: none;
+      border-radius: 15px;
+      color: #720026;
+      font-weight: 600;
+    }
+    .notification.hide {
+      animation: fade-out 0.3s forwards;
+    }
+    @keyframes fade-in {
+      0% {opacity: 0;}
+      100% {opacity: 1;}
+    }
+    @keyframes fade-out {
+      0% {opacity: 1;}
+      100% {opacity: 0;}
+    }
+    .notification-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #720026;
+    }
+    .notification-message {
+      font-size: 14px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .notification-close {
+      background-color: #d6336c;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .notification-close:hover {
+      background-color: #a31a47;
+    }
+    #canvas {
+      border: 2px solid #d6336c;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(214, 51, 108, 0.3);
+      background-color: #fff;
+      display: block;
+      margin: 20px auto 0;
+    }
+    .button-container {
+      margin-top: 20px;
+      background-color: #f8bbd0;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(214, 51, 108, 0.2);
+      text-align: center;
+    }
+    button {
+      color: #fff;
+      background-color: #d6336c;
+      border: none;
+      padding: 12px 26px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 0 10px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #a31a47;
+    }
+    #solution-container {
+      white-space: pre-wrap;
+      margin: 25px auto;
+      padding: 20px;
+      background-color: #fff0f6;
+      border: 2px solid #d6336c;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(214, 51, 108, 0.25);
+      width: 80%;
+      color: #720026;
+      font-weight: 600;
+      font-size: 15px;
+      min-height: 50px;
+    }
+    #weight-content {
+      width: 20%;
+      overflow-y: auto;
+      padding: 20px;
+      background-color: #fff0f6;
+      border-left: 2px solid #d6336c;
+      border-radius: 0 12px 12px 0;
+      box-shadow: inset 0 0 10px rgba(214, 51, 108, 0.15);
+      font-weight: 600;
+      color: #720026;
+    }
+    #weight-content input[type="number"] {
+      width: 100%;
+      height: 30px;
+      padding: 6px;
+      margin-bottom: 12px;
+      border: 2px solid #d6336c;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #720026;
+    }
+    #weight-content input[type="number"]:focus {
+      outline: none;
+      border-color: #a31a47;
+      box-shadow: 0 0 10px rgba(163, 26, 71, 0.4);
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+      max-height: 100vh;
+      background-color: #fff0f6;
+    }
+    .main-content {
+      width: 80%;
+      overflow-y: auto;
+      padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="main-content">
+      <center>
+        <h1>Kruskal's Algorithm Simulation</h1>
+        <canvas id="canvas" width="800" height="450"></canvas>
+        <div class="button-container">
+          <button id="vertex-btn">Add Vertex</button>
+          <button id="edge-btn">Add Edge</button>
+          <button id="undo-btn">Undo</button>
+          <button id="reset-btn">Reset</button>
+          <button id="delete-btn">Delete Vertex</button>
+          <button id="weight-btn">Weight Mode</button>
+          <button id="solve-btn">Run Kruskal's Algorithm</button>
+          <button id="about-btn">About</button>
+        </div>
+        <div id="solution-container"></div>
+      </center>
+    </div>
+    <div id="weight-content"></div>
+  </div>
+
+  <!-- About overlay -->
+  <div class="about-iframe-overlay" id="about-overlay">
+    <div class="about-iframe-container">
+      <iframe srcdoc='
+      <html>
+        <head>
+          <style>
+            body {
+              background-color: #d6336c;
+              color: white;
+              font-family: Arial, sans-serif;
+              padding: 20px;
+              line-height: 1.5;
+            }
+            h1 {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Kruskal&#39;s Algorithm</h1>
+          <p>
+            Kruskal&#39;s algorithm is a greedy algorithm to find the Minimum Spanning Tree (MST) of a weighted, connected, undirected graph.
+            It sorts all edges in non-decreasing order of their weight and adds edges to the MST, avoiding cycles, until all vertices are connected.
+          </p>
+          <h3>How to use this simulation:</h3>
+          <ol>
+            <li>Click "Add Vertex" to create vertices. Enter a unique label for each.</li>
+            <li>Click "Add Edge" to connect two vertices. Click once on each vertex to create an edge.</li>
+            <li>Click "Weight Mode" to assign or edit edge weights.</li>
+            <li>Use "Delete Vertex" to remove selected vertices.</li>
+            <li>Click "Run Kruskal&#39;s Algorithm" to find and highlight the MST.</li>
+            <li>Use "Undo" and "Reset" to manage your graph.</li>
+          </ol>
+          <p>
+            Kruskal&#39;s algorithm complexity is O(E log E), where E is the number of edges.
+          </p>
+        </body>
+      </html>
+      ' frameborder="0" width="100%" height="100%"></iframe>
+      <span class="about-close-btn" id="about-close-btn">&times;</span>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let graph = {
+      vertices: [],
+      edges: []
+    };
+
+    let draggingVertex = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    let isEdgeMode = false;
+    let edgeFromVertex = null;
+
+    let isWeightMode = false;
+
+    let selectedVertex = null;
+
+    let history = [];
+    let historyIndex = -1;
+
+    // Save graph state for undo
+    function saveHistory() {
+      historyIndex++;
+      history = history.slice(0, historyIndex);
+      const snapshot = {
+        vertices: graph.vertices.map(v => ({ x: v.x, y: v.y, label: v.label })),
+        edges: graph.edges.map(e => ({
+          from: graph.vertices.indexOf(e.from),
+          to: graph.vertices.indexOf(e.to),
+          weight: e.weight || 1
+        }))
+      };
+      history.push(snapshot);
+    }
+
+    // Restore graph state from history
+    function restoreHistory(index) {
+      if (index < 0 || index >= history.length) return;
+      const snapshot = history[index];
+      graph.vertices = snapshot.vertices.map(v => ({ x: v.x, y: v.y, label: v.label }));
+      graph.edges = snapshot.edges.map(e => ({
+        from: graph.vertices[e.from],
+        to: graph.vertices[e.to],
+        weight: e.weight
+      }));
+    }
+
+    // Draw the graph
+    function drawGraph(highlightEdges = []) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw edges
+      graph.edges.forEach(edge => {
+        ctx.beginPath();
+        ctx.moveTo(edge.from.x, edge.from.y);
+        ctx.lineTo(edge.to.x, edge.to.y);
+        ctx.strokeStyle = highlightEdges.includes(edge) ? "#d6336c" : "#720026";
+        ctx.lineWidth = highlightEdges.includes(edge) ? 4 : 2;
+        ctx.stroke();
+
+        // Draw weight label
+        if (edge.weight !== undefined && edge.weight !== null) {
+          const midX = (edge.from.x + edge.to.x) / 2;
+          const midY = (edge.from.y + edge.to.y) / 2;
+          ctx.fillStyle = "#d6336c";
+          ctx.font = "14px Arial";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(edge.weight, midX, midY - 10);
+        }
+      });
+
+      // Draw vertices
+      graph.vertices.forEach(vertex => {
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 22, 0, 2 * Math.PI);
+        ctx.fillStyle = selectedVertex === vertex ? "#f8bbd0" : "#d6336c";
+        ctx.strokeStyle = "#720026";
+        ctx.lineWidth = 3;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "16px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(vertex.label, vertex.x, vertex.y);
+      });
+    }
+
+    // Check if point inside vertex
+    function isInsideVertex(x, y, vertex) {
+      return Math.hypot(x - vertex.x, y - vertex.y) < 22;
+    }
+
+    // Add vertex button handler
+    document.getElementById("vertex-btn").addEventListener("click", () => {
+      const label = prompt("Enter vertex label (unique):");
+      if (!label || label.trim() === "") {
+        alert("Label cannot be empty.");
+        return;
+      }
+      if (graph.vertices.find(v => v.label === label.trim())) {
+        alert("Vertex label must be unique.");
+        return;
+      }
+      const x = canvas.width / 2 + (Math.random() - 0.5) * 200;
+      const y = canvas.height / 2 + (Math.random() - 0.5) * 100;
+      graph.vertices.push({ x, y, label: label.trim() });
+      saveHistory();
+      drawGraph();
+    });
+
+    // Edge button toggles edge mode
+    document.getElementById("edge-btn").addEventListener("click", () => {
+      isEdgeMode = !isEdgeMode;
+      edgeFromVertex = null;
+      alert(isEdgeMode ? "Edge mode enabled: click two vertices to add an edge." : "Edge mode disabled.");
+    });
+
+    // Weight mode toggle
+    document.getElementById("weight-btn").addEventListener("click", () => {
+      isWeightMode = !isWeightMode;
+      const weightContent = document.getElementById("weight-content");
+      if (isWeightMode) {
+        weightContent.innerHTML = "";
+        graph.edges.forEach((edge, i) => {
+          const input = document.createElement("input");
+          input.type = "number";
+          input.min = 1;
+          input.value = edge.weight || 1;
+          input.placeholder = `Edge ${edge.from.label} - ${edge.to.label}`;
+          input.dataset.index = i;
+          input.addEventListener("input", e => {
+            const idx = e.target.dataset.index;
+            const val = parseInt(e.target.value);
+            if (!isNaN(val) && val > 0) {
+              graph.edges[idx].weight = val;
+              drawGraph();
+            }
+          });
+          weightContent.appendChild(input);
+        });
+      } else {
+        weightContent.innerHTML = "";
+      }
+    });
+
+    // Undo button
+    document.getElementById("undo-btn").addEventListener("click", () => {
+      if (historyIndex > 0) {
+        historyIndex--;
+        restoreHistory(historyIndex);
+        drawGraph();
+      } else {
+        alert("Nothing to undo.");
+      }
+    });
+
+    // Reset button
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to reset the entire graph?")) {
+        graph.vertices = [];
+        graph.edges = [];
+        history = [];
+        historyIndex = -1;
+        selectedVertex = null;
+        document.getElementById("weight-content").innerHTML = "";
+        document.getElementById("solution-container").innerHTML = "";
+        drawGraph();
+      }
+    });
+
+    // Delete vertex button
+    document.getElementById("delete-btn").addEventListener("click", () => {
+      if (!selectedVertex) {
+        alert("Select a vertex by clicking on it to delete.");
+        return;
+      }
+      const idx = graph.vertices.indexOf(selectedVertex);
+      if (idx !== -1) {
+        graph.vertices.splice(idx, 1);
+        // Remove edges connected to this vertex
+        graph.edges = graph.edges.filter(e => e.from !== selectedVertex && e.to !== selectedVertex);
+        selectedVertex = null;
+        saveHistory();
+        drawGraph();
+      }
+    });
+
+    // Solve button runs Kruskal's algorithm
+    document.getElementById("solve-btn").addEventListener("click", () => {
+      if (graph.vertices.length === 0) {
+        alert("Add vertices first.");
+        return;
+      }
+      if (graph.edges.length === 0) {
+        alert("Add edges first.");
+        return;
+      }
+      const mstEdges = runKruskalsAlgorithm();
+      if (!mstEdges.length) {
+        alert("Could not find MST. Is the graph connected?");
+        return;
+      }
+      displayMST(mstEdges);
+    });
+
+    // Canvas mouse down for dragging or edge creation
+    canvas.addEventListener("mousedown", e => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      if (isEdgeMode) {
+        // Select vertices for edge creation
+        for (const v of graph.vertices) {
+          if (isInsideVertex(mouseX, mouseY, v)) {
+            if (!edgeFromVertex) {
+              edgeFromVertex = v;
+            } else if (v !== edgeFromVertex) {
+              // Check if edge already exists
+              const exists = graph.edges.find(edge =>
+                (edge.from === edgeFromVertex && edge.to === v) ||
+                (edge.to === edgeFromVertex && edge.from === v)
+              );
+              if (exists) {
+                alert("Edge already exists between these vertices.");
+                edgeFromVertex = null;
+                return;
+              }
+              graph.edges.push({ from: edgeFromVertex, to: v, weight: 1 });
+              saveHistory();
+              drawGraph();
+              edgeFromVertex = null;
+            }
+            return;
+          }
+        }
+      } else {
+        // Select vertex for dragging or selecting
+        for (const v of graph.vertices) {
+          if (isInsideVertex(mouseX, mouseY, v)) {
+            draggingVertex = v;
+            dragOffsetX = mouseX - v.x;
+            dragOffsetY = mouseY - v.y;
+            selectedVertex = v;
+            drawGraph();
+            return;
+          }
+        }
+        selectedVertex = null;
+        drawGraph();
+      }
+    });
+
+    // Canvas mouse move for dragging vertex
+    canvas.addEventListener("mousemove", e => {
+      if (draggingVertex) {
+        const rect = canvas.getBoundingClientRect();
+        draggingVertex.x = e.clientX - rect.left - dragOffsetX;
+        draggingVertex.y = e.clientY - rect.top - dragOffsetY;
+        drawGraph();
+      }
+    });
+
+    // Canvas mouse up to stop dragging
+    canvas.addEventListener("mouseup", () => {
+      if (draggingVertex) {
+        draggingVertex = null;
+        saveHistory();
+      }
+    });
+
+    // Click on about button to open overlay
+    document.getElementById("about-btn").addEventListener("click", () => {
+      document.getElementById("about-overlay").style.display = "block";
+    });
+
+    // Close about overlay
+    document.getElementById("about-close-btn").addEventListener("click", () => {
+      document.getElementById("about-overlay").style.display = "none";
+    });
+
+    // Kruskal's Algorithm Implementation
+
+    // Disjoint Set Union (Union-Find) Data Structure
+    class DisjointSet {
+      constructor(n) {
+        this.parent = Array(n);
+        this.rank = Array(n).fill(0);
+        for (let i = 0; i < n; i++) this.parent[i] = i;
+      }
+      find(x) {
+        if (this.parent[x] !== x) {
+          this.parent[x] = this.find(this.parent[x]);
+        }
+        return this.parent[x];
+      }
+      union(x, y) {
+        const rootX = this.find(x);
+        const rootY = this.find(y);
+        if (rootX === rootY) return false;
+        if (this.rank[rootX] < this.rank[rootY]) {
+          this.parent[rootX] = rootY;
+        } else if (this.rank[rootY] < this.rank[rootX]) {
+          this.parent[rootY] = rootX;
+        } else {
+          this.parent[rootY] = rootX;
+          this.rank[rootX]++;
+        }
+        return true;
+      }
+    }
+
+    function runKruskalsAlgorithm() {
+      const vertices = graph.vertices;
+      const edges = graph.edges;
+      const n = vertices.length;
+
+      // Sort edges by weight ascending
+      const sortedEdges = edges.slice().sort((a, b) => a.weight - b.weight);
+
+      const ds = new DisjointSet(n);
+      const mstEdges = [];
+
+      // Map vertex to index for union-find
+      function vertexIndex(v) {
+        return vertices.indexOf(v);
+      }
+
+      for (const edge of sortedEdges) {
+        const u = vertexIndex(edge.from);
+        const v = vertexIndex(edge.to);
+
+        if (ds.union(u, v)) {
+          mstEdges.push(edge);
+          if (mstEdges.length === n - 1) break;
+        }
+      }
+
+      if (mstEdges.length !== n - 1) {
+        // Graph not connected
+        return [];
+      }
+      return mstEdges;
+    }
+
+    // Display MST result and highlight edges
+    function displayMST(mstEdges) {
+      drawGraph(mstEdges);
+      const totalWeight = mstEdges.reduce((sum, e) => sum + e.weight, 0);
+      let resultText = `Minimum Spanning Tree Edges:\n\n`;
+      mstEdges.forEach(e => {
+        resultText += `${e.from.label} -- ${e.to.label} (weight: ${e.weight})\n`;
+      });
+      resultText += `\nTotal Weight: ${totalWeight}`;
+      document.getElementById("solution-container").textContent = resultText;
+    }
+
+    // Initial save and draw
+    saveHistory();
+    drawGraph();
+  </script>
+</body>
+</html>
