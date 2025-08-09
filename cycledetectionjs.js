@@ -91,7 +91,7 @@ notificationCloseButton.addEventListener('click', () => {
     graph.vertices.forEach((vertex) => {
         ctx.beginPath();
         ctx.arc(vertex.x, vertex.y, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = '#4cbb17';
+        ctx.fillStyle = '#00ff00';
         ctx.fill();
 
         ctx.font = '12px Arial';
