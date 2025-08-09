@@ -163,6 +163,53 @@ document.getElementById('vertex-btn').addEventListener('click', () => {
     saveHistory();
 });
 
+let isSelfLoopMode = false;
+
+document.getElementById('selfloop-btn').addEventListener('click', () => {
+    isSelfLoopMode = true;
+    alert("Click on the vertex for which you want the self loop");
+});
+
+// Canvas click handler needs to be updated to handle self loop creation
+canvas.addEventListener('click', (e) => {
+    if (isSelfLoopMode) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Find the clicked vertex within radius 20
+        const clickedVertex = graph.vertices.find(vertex => Math.hypot(x - vertex.x, y - vertex.y) < 20);
+
+        if (clickedVertex) {
+            // Add a self loop edge (from vertex to itself)
+            graph.edges.push({ from: clickedVertex, to: clickedVertex });
+            saveHistory();
+        }
+
+        // Exit self loop mode after adding one self loop
+        isSelfLoopMode = false;
+    } else if (isEdgeMode) {
+        // existing edge creation logic ...
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        graph.vertices.forEach((vertex) => {
+            if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
+                if (!edgeFromVertex) {
+                    edgeFromVertex = vertex;
+                } else {
+                    graph.edges.push({ from: edgeFromVertex, to: vertex });
+                    edgeFromVertex = null;
+                }
+                saveHistory();
+            }
+        });
+    }
+    // (Other click behaviors remain unchanged)
+});
+
+
 function saveHistory() {
     historyIndex++;
     history = history.slice(0, historyIndex);
