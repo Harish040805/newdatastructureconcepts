@@ -207,45 +207,29 @@ const iframeContent = `
   <html>
     <head>
       <style>
-        body {
-          margin: 0;
-          background-color: #d6336c; /* Pink */
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          font-family: Arial, sans-serif;
-          color: white;
-        }
         button {
-          background-color: white;
-          color: #d6336c;
-          border: none;
-          padding: 15px 40px;
-          font-size: 1.5rem;
-          font-weight: bold;
-          border-radius: 10px;
+          padding: 10px 20px; 
+          border: none; 
+          border-radius: 5px; 
+          background-color: #d6336c;
+          color: #000000; 
           cursor: pointer;
-          transition: background-color 0.3s ease;
         }
         button:hover {
-          background-color: #f8bbd0;
+          background-color: #ec8dae; 
         }
       </style>
     </head>
-    <body>
-    <h2>Prims Algorithm Problem Solver</h2>
-    <br><br>
-      <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">
-        Enter
-      </button>
+    <body style="font-family: Arial, sans-serif; background-color: pink; text-align: center; margin-top: 20%;">
+      <h1 style="color: #fff;">Prim's Algorithm Problem Solver</h1>
+      <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">Enter</button>
     </body>
   </html>
 `;
 
 iframe.srcdoc = iframeContent;
 document.body.appendChild(iframe);
-</script>  
+</script>
   <div class="container">
     <div class="main-content">
       <center>
