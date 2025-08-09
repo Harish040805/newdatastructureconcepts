@@ -96,7 +96,7 @@ graph.vertices.forEach((vertex) => {
     ctx.lineWidth = 3;
     ctx.strokeStyle = '#000';
     ctx.stroke();
-
+    ctx.closePath();  
     ctx.font = '12px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
