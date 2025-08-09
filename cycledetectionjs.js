@@ -49,23 +49,41 @@ notificationCloseButton.addEventListener('click', () => {
         ctx.fillText(vertex.label, vertex.x, vertex.y);
     });
 
-    graph.edges.forEach((edge) => {
+graph.edges.forEach((edge) => {
+    if (edge.from === edge.to) {
+        const x = edge.from.x;
+        const y = edge.from.y;
+        const radius = 20;  // radius of the vertex circle
+        const loopRadius = 15; // radius of the self loop circle
+        const loopX = x + radius; // offset the loop to the right
+        const loopY = y - radius; // offset the loop upward
+
+        // Draw the circular self loop arc (a circle segment)
         ctx.beginPath();
-        ctx.moveTo(edge.from.x, edge.from.y);
-        ctx.lineTo(edge.to.x, edge.to.y);
+        ctx.arc(loopX, loopY, loopRadius, 0, 2 * Math.PI);
         ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        let angle = Math.atan2(edge.to.y - edge.from.y, edge.to.x - edge.from.x);
-        let arrowSize = 10;
+        // Draw arrowhead on the loop (pointing downward-left)
+        const arrowAngle = Math.PI * 0.75; // 135 degrees (down-left)
+        const arrowLength = 10;
+
+        const arrowX = loopX + loopRadius * Math.cos(arrowAngle);
+        const arrowY = loopY + loopRadius * Math.sin(arrowAngle);
+
         ctx.beginPath();
-        ctx.moveTo(edge.to.x, edge.to.y);
-        ctx.lineTo(edge.to.x - arrowSize * Math.cos(angle - Math.PI / 6), edge.to.y - arrowSize * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(edge.to.x - arrowSize * Math.cos(angle + Math.PI / 6), edge.to.y - arrowSize * Math.sin(angle + Math.PI / 6));
-        ctx.lineTo(edge.to.x, edge.to.y);
+        ctx.moveTo(arrowX, arrowY);
+        ctx.lineTo(arrowX - arrowLength * Math.cos(arrowAngle - Math.PI / 6),
+                   arrowY - arrowLength * Math.sin(arrowAngle - Math.PI / 6));
+        ctx.lineTo(arrowX - arrowLength * Math.cos(arrowAngle + Math.PI / 6),
+                   arrowY - arrowLength * Math.sin(arrowAngle + Math.PI / 6));
+        ctx.closePath();
         ctx.fillStyle = 'black';
         ctx.fill();
-    });
+    }
+});
+
 }
 
         setInterval(drawGraph, 100);
