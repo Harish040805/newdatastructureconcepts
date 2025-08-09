@@ -49,41 +49,23 @@ notificationCloseButton.addEventListener('click', () => {
         ctx.fillText(vertex.label, vertex.x, vertex.y);
     });
 
-graph.edges.forEach((edge) => {
-    if (edge.from === edge.to) {
-        const x = edge.from.x;
-        const y = edge.from.y;
-        const radius = 20;  // radius of the vertex circle
-        const loopRadius = 15; // radius of the self loop circle
-        const loopX = x + radius; // offset the loop to the right
-        const loopY = y - radius; // offset the loop upward
-
-        // Draw the circular self loop arc (a circle segment)
+    graph.edges.forEach((edge) => {
         ctx.beginPath();
-        ctx.arc(loopX, loopY, loopRadius, 0, 2 * Math.PI);
+        ctx.moveTo(edge.from.x, edge.from.y);
+        ctx.lineTo(edge.to.x, edge.to.y);
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Draw arrowhead on the loop (pointing downward-left)
-        const arrowAngle = Math.PI * 0.75; // 135 degrees (down-left)
-        const arrowLength = 10;
-
-        const arrowX = loopX + loopRadius * Math.cos(arrowAngle);
-        const arrowY = loopY + loopRadius * Math.sin(arrowAngle);
-
+        let angle = Math.atan2(edge.to.y - edge.from.y, edge.to.x - edge.from.x);
+        let arrowSize = 10;
         ctx.beginPath();
-        ctx.moveTo(arrowX, arrowY);
-        ctx.lineTo(arrowX - arrowLength * Math.cos(arrowAngle - Math.PI / 6),
-                   arrowY - arrowLength * Math.sin(arrowAngle - Math.PI / 6));
-        ctx.lineTo(arrowX - arrowLength * Math.cos(arrowAngle + Math.PI / 6),
-                   arrowY - arrowLength * Math.sin(arrowAngle + Math.PI / 6));
-        ctx.closePath();
+        ctx.moveTo(edge.to.x, edge.to.y);
+        ctx.lineTo(edge.to.x - arrowSize * Math.cos(angle - Math.PI / 6), edge.to.y - arrowSize * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(edge.to.x - arrowSize * Math.cos(angle + Math.PI / 6), edge.to.y - arrowSize * Math.sin(angle + Math.PI / 6));
+        ctx.lineTo(edge.to.x, edge.to.y);
         ctx.fillStyle = 'black';
         ctx.fill();
-    }
-});
-
+    });
 }
 
         setInterval(drawGraph, 100);
@@ -180,53 +162,6 @@ document.getElementById('vertex-btn').addEventListener('click', () => {
 
     saveHistory();
 });
-
-let isSelfLoopMode = false;
-
-document.getElementById('selfloop-btn').addEventListener('click', () => {
-    isSelfLoopMode = true;
-    alert("Click on the vertex for which you want the self loop");
-});
-
-// Canvas click handler needs to be updated to handle self loop creation
-canvas.addEventListener('click', (e) => {
-    if (isSelfLoopMode) {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Find the clicked vertex within radius 20
-        const clickedVertex = graph.vertices.find(vertex => Math.hypot(x - vertex.x, y - vertex.y) < 20);
-
-        if (clickedVertex) {
-            // Add a self loop edge (from vertex to itself)
-            graph.edges.push({ from: clickedVertex, to: clickedVertex });
-            saveHistory();
-        }
-
-        // Exit self loop mode after adding one self loop
-        isSelfLoopMode = false;
-    } else if (isEdgeMode) {
-        // existing edge creation logic ...
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        graph.vertices.forEach((vertex) => {
-            if (Math.hypot(x - vertex.x, y - vertex.y) < 20) {
-                if (!edgeFromVertex) {
-                    edgeFromVertex = vertex;
-                } else {
-                    graph.edges.push({ from: edgeFromVertex, to: vertex });
-                    edgeFromVertex = null;
-                }
-                saveHistory();
-            }
-        });
-    }
-    // (Other click behaviors remain unchanged)
-});
-
 
 function saveHistory() {
     historyIndex++;
