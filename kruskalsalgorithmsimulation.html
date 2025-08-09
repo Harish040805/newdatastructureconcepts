@@ -261,6 +261,58 @@
   </div>
 
   <script>
+const iframe = document.createElement('iframe');
+iframe.style.position = 'fixed';
+iframe.style.top = '0';
+iframe.style.left = '0';
+iframe.style.width = '100%';
+iframe.style.height = '100%';
+iframe.style.zIndex = '9999';
+iframe.style.border = 'none';
+
+const iframeContent = `
+  <html>
+    <head>
+      <style>
+        body {
+          margin: 0;
+          background-color: #d6336c; /* Pink */
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          font-family: Arial, sans-serif;
+          color: white;
+        }
+        button {
+          background-color: white;
+          color: #d6336c;
+          border: none;
+          padding: 15px 40px;
+          font-size: 1.5rem;
+          font-weight: bold;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+        button:hover {
+          background-color: #f8bbd0;
+        }
+      </style>
+    </head>
+    <body>
+    <h2>Kruskals Algorithm Problem Solver</h2>
+      <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">
+        Enter
+      </button>
+    </body>
+  </html>
+`;
+
+iframe.srcdoc = iframeContent;
+document.body.appendChild(iframe);
+
+    
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
