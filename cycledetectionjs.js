@@ -35,20 +35,7 @@ notificationCloseButton.addEventListener('click', () => {
 
         function drawGraph() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    graph.vertices.forEach((vertex) => {
-        ctx.beginPath();
-        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
-        ctx.fillStyle = '#4cbb17';
-        ctx.fill();
-
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'white';
-        ctx.fillText(vertex.label, vertex.x, vertex.y);
-    });
-
-    graph.edges.forEach((edge) => {
+	    graph.edges.forEach((edge) => {
         ctx.beginPath();
         ctx.moveTo(edge.from.x, edge.from.y);
         ctx.lineTo(edge.to.x, edge.to.y);
@@ -64,6 +51,18 @@ notificationCloseButton.addEventListener('click', () => {
         ctx.lineTo(edge.to.x, edge.to.y);
         ctx.fillStyle = 'black';
         ctx.fill();
+    });
+    graph.vertices.forEach((vertex) => {
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = '#4cbb17';
+        ctx.fill();
+
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'white';
+        ctx.fillText(vertex.label, vertex.x, vertex.y);
     });
 }
 
