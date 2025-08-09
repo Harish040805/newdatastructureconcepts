@@ -86,23 +86,23 @@ notificationCloseButton.addEventListener('click', () => {
         ctx.fillStyle = 'black';
         ctx.fill();
     });
+		
+graph.vertices.forEach((vertex) => {
+    ctx.beginPath();
+    ctx.arc(vertex.x, vertex.y, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = '#00ff00'; 
+    ctx.fill();
 
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#000';
+    ctx.stroke();
 
-    graph.vertices.forEach((vertex) => {
-        ctx.beginPath();
-        ctx.arc(vertex.x, vertex.y, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = '#00ff00';
-        ctx.fill();
-
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'white';
-        ctx.fillText(vertex.label, vertex.x, vertex.y);
-    });
-}
-
-
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'black';
+    ctx.fillText(vertex.label, vertex.x, vertex.y);
+});
         setInterval(drawGraph, 100);
 
         canvas.addEventListener('mousedown', (e) => {
