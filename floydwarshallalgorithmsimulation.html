@@ -192,19 +192,6 @@ let historyIndex = -1;
 
 function drawGraph() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    graph.vertices.forEach((vertex) => {
-        ctx.beginPath();
-        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
-        ctx.fillStyle = 'violet';
-        ctx.fill();
-
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'black';
-        ctx.fillText(vertex.label, vertex.x, vertex.y);
-    });
-
     graph.edges.forEach((edge) => {
         ctx.beginPath();
         ctx.moveTo(edge.from.x, edge.from.y);
@@ -219,6 +206,18 @@ function drawGraph() {
             ctx.fillStyle = 'black';
             ctx.fillText(edge.weight, (edge.from.x + edge.to.x) / 2, (edge.from.y + edge.to.y) / 2);
         }
+    });
+    graph.vertices.forEach((vertex) => {
+        ctx.beginPath();
+        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = 'violet';
+        ctx.fill();
+
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'black';
+        ctx.fillText(vertex.label, vertex.x, vertex.y);
     });
 }
 
@@ -602,3 +601,4 @@ function displayShortestPath(matrix, startVertexLabel) {
 </div>
 </body>
 </html>
+
