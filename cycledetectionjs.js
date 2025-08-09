@@ -33,28 +33,64 @@ notificationCloseButton.addEventListener('click', () => {
         let history = [];
         let historyIndex = -1;
 
-        function drawGraph() {
+    function drawGraph() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-	    graph.edges.forEach((edge) => {
+
+    const radius = 20;      
+    const arrowSize = 10;  
+
+    graph.edges.forEach((edge) => {
+        const dx = edge.to.x - edge.from.x;
+        const dy = edge.to.y - edge.from.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist === 0) return; 
+
+        const ux = dx / dist;
+        const uy = dy / dist;
+
+        
+        const startX = edge.from.x + ux * radius;
+        const startY = edge.from.y + uy * radius;
+
+        
+        const lineEndX = edge.to.x - ux * (radius + arrowSize / 2);
+        const lineEndY = edge.to.y - uy * (radius + arrowSize / 2);
+
+        
+        const arrowTipX = edge.to.x - ux * radius;
+        const arrowTipY = edge.to.y - uy * radius;
+
+        
         ctx.beginPath();
-        ctx.moveTo(edge.from.x, edge.from.y);
-        ctx.lineTo(edge.to.x, edge.to.y);
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(lineEndX, lineEndY);
         ctx.strokeStyle = 'black';
         ctx.stroke();
 
-        let angle = Math.atan2(edge.to.y - edge.from.y, edge.to.x - edge.from.x);
-        let arrowSize = 10;
+        
+        let angle = Math.atan2(dy, dx);
+
+        
         ctx.beginPath();
-        ctx.moveTo(edge.to.x, edge.to.y);
-        ctx.lineTo(edge.to.x - arrowSize * Math.cos(angle - Math.PI / 6), edge.to.y - arrowSize * Math.sin(angle - Math.PI / 6));
-        ctx.lineTo(edge.to.x - arrowSize * Math.cos(angle + Math.PI / 6), edge.to.y - arrowSize * Math.sin(angle + Math.PI / 6));
-        ctx.lineTo(edge.to.x, edge.to.y);
+        ctx.moveTo(arrowTipX, arrowTipY);
+        ctx.lineTo(
+            arrowTipX - arrowSize * Math.cos(angle - Math.PI / 6),
+            arrowTipY - arrowSize * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.lineTo(
+            arrowTipX - arrowSize * Math.cos(angle + Math.PI / 6),
+            arrowTipY - arrowSize * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.lineTo(arrowTipX, arrowTipY);
         ctx.fillStyle = 'black';
         ctx.fill();
     });
+
+
     graph.vertices.forEach((vertex) => {
         ctx.beginPath();
-        ctx.arc(vertex.x, vertex.y, 20, 0, 2 * Math.PI);
+        ctx.arc(vertex.x, vertex.y, radius, 0, 2 * Math.PI);
         ctx.fillStyle = '#4cbb17';
         ctx.fill();
 
@@ -65,6 +101,7 @@ notificationCloseButton.addEventListener('click', () => {
         ctx.fillText(vertex.label, vertex.x, vertex.y);
     });
 }
+
 
         setInterval(drawGraph, 100);
 
