@@ -629,5 +629,160 @@ document.body.appendChild(iframe);
     drawGraph();
 
   </script>
+<div id="weight-content" style="width: 20%; height: 100%; float: right; overflow-y: auto;">
+</div>
+</div>
+<div id="draggableainameWidget" style="position:relative; width:100%; height:100%;">
+  <button id="draggableainameFloatButton"
+    style="position:absolute; top:90%; left:5%; transform:translate(-50%,-50%);
+           padding:20px 24px; background-color:#0077cc; color:#fff; border:5px solid #fff;
+           border-radius:50%; cursor:grab; font-size:20px; font-weight:bold;
+           box-shadow:0 4px 8px rgba(0,0,0,0.2); user-select:none; z-index:1000;">
+    AI
+  </button>
+
+  <iframe id="draggableainameIframe"
+    style="position:fixed; top:0; right:0; width:20vw; height:100vh; border:none; background:#fff;
+           box-shadow:-4px 0 12px rgba(0,0,0,0.2); display:none; z-index:999;"
+    srcdoc="<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<style>
+  body { margin:0; font-family:Arial,sans-serif; background:#fff; display:flex; flex-direction:column; height:100%; }
+  #draggableainameHeader { position:relative; background:#0077cc; color:#fff; text-align:center; padding:12px; font-weight:bold; font-size:18px; }
+  #draggableainameCloseButton { position:absolute; top:10px; right:10px; padding:6px 12px; background:#ff0000; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+  #draggableainameCloseButton:hover { opacity:.9; }
+  #draggableainameContent { flex:1; padding:10px; display:flex; flex-direction:column; gap:10px; }
+  #draggableainameUserInput { width:90%; padding:8px; font-size:14px; border:1px solid #ccc; border-radius:6px; }
+  .draggableainameAskButton { padding:8px; background:#0077cc; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer; }
+  .draggableainameAskButton:hover { background:#005fa3; }
+  #draggableainameResponse { margin-top:10px; font-size:14px; color:#333; overflow-y:auto; max-height:70%; border-top:1px solid #ccc; padding-top:8px; white-space:pre-wrap; }
+</style>
+</head>
+<body>
+  <div id='draggableainameHeader'>Ask AI
+    <button id='draggableainameCloseButton' aria-label='Close panel'>X</button>
+  </div>
+  <div id='draggableainameContent'>
+    <input type='text' id='draggableainameUserInput' placeholder='Type your question...'>
+    <button class='draggableainameAskButton' id='draggableainameAskButton'>Ask AI</button>
+    <div id='draggableainameResponse'>Response will appear here...</div>
+  </div>
+<script>
+  (function(){
+    const draggableainameAskButton = document.getElementById('draggableainameAskButton');
+    const draggableainameResponse = document.getElementById('draggableainameResponse');
+    const draggableainameUserInput = document.getElementById('draggableainameUserInput');
+    const draggableainameCloseButton = document.getElementById('draggableainameCloseButton');
+
+    draggableainameCloseButton.addEventListener('click', function(){
+      parent.postMessage({ type: 'draggableainame-close-iframe' }, '*');
+    });
+
+    draggableainameAskButton.addEventListener('click', async function(){
+      const draggableainameQuestion = (draggableainameUserInput.value || '').trim();
+      if(!draggableainameQuestion){
+        draggableainameResponse.innerHTML = '<span style=&quot;color:red;&quot;>Please enter a question.</span>';
+        return;
+      }
+      draggableainameResponse.innerHTML = '<em>Thinking...</em>';
+
+      try {
+        const draggableainameRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyC5ab-HZmvtoTEXMRBMb4-tPpwD2yMVF1A', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [ { parts: [ { text: draggableainameQuestion } ] } ] })
+        });
+        const draggableainameData = await draggableainameRes.json();
+        const draggableainameText =
+          (draggableainameData && draggableainameData.candidates && draggableainameData.candidates[0] &&
+           draggableainameData.candidates[0].content && draggableainameData.candidates[0].content.parts &&
+           draggableainameData.candidates[0].content.parts[0] && draggableainameData.candidates[0].content.parts[0].text)
+           || 'No response from AI.';
+        draggableainameResponse.textContent = draggableainameText;
+      } catch (draggableainameErr) {
+        draggableainameResponse.textContent = 'Error: ' + draggableainameErr.message;
+      }
+    });
+  })();
+</script>
+</body>
+</html>">
+  </iframe>
+
+  <script>
+    (function(){
+      const draggableainameFloatButton = document.getElementById('draggableainameFloatButton');
+      const draggableainameIframe = document.getElementById('draggableainameIframe');
+
+      draggableainameFloatButton.addEventListener('click', function(){
+        draggableainameIframe.style.display = 'block';
+        draggableainameFloatButton.style.display = 'none';
+      });
+
+      window.addEventListener('message', function(e){
+        if(e && e.data && e.data.type === 'draggableainame-close-iframe'){
+          draggableainameIframe.style.display = 'none';
+          draggableainameFloatButton.style.display = 'inline-block';
+        }
+      });
+
+      let draggableainameIsDragging = false;
+      let draggableainameStartX = 0, draggableainameStartY = 0;
+      let draggableainameOffsetX = 0, draggableainameOffsetY = 0;
+
+      const draggableainameStartDrag = function(ev){
+        ev.preventDefault();
+        draggableainameIsDragging = false;
+
+        const point = ev.touches ? ev.touches[0] : ev;
+        draggableainameStartX = point.clientX;
+        draggableainameStartY = point.clientY;
+
+        draggableainameOffsetX = draggableainameFloatButton.offsetLeft;
+        draggableainameOffsetY = draggableainameFloatButton.offsetTop;
+
+        document.addEventListener('mousemove', draggableainameOnMove);
+        document.addEventListener('mouseup', draggableainameStopDrag);
+        document.addEventListener('touchmove', draggableainameOnMove, { passive: false });
+        document.addEventListener('touchend', draggableainameStopDrag);
+      };
+
+      const draggableainameOnMove = function(ev){
+        ev.preventDefault();
+        const point = ev.touches ? ev.touches[0] : ev;
+        const dx = point.clientX - draggableainameStartX;
+        const dy = point.clientY - draggableainameStartY;
+
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) draggableainameIsDragging = true;
+
+        if (draggableainameIsDragging) {
+          let newX = draggableainameOffsetX + dx;
+          let newY = draggableainameOffsetY + dy;
+
+          const maxX = window.innerWidth - draggableainameFloatButton.offsetWidth;
+          const maxY = window.innerHeight - draggableainameFloatButton.offsetHeight;
+
+          newX = Math.max(0, Math.min(newX, maxX));
+          newY = Math.max(0, Math.min(newY, maxY));
+
+          draggableainameFloatButton.style.left = newX + 'px';
+          draggableainameFloatButton.style.top = newY + 'px';
+        }
+      };
+
+      const draggableainameStopDrag = function(){
+        document.removeEventListener('mousemove', draggableainameOnMove);
+        document.removeEventListener('mouseup', draggableainameStopDrag);
+        document.removeEventListener('touchmove', draggableainameOnMove);
+        document.removeEventListener('touchend', draggableainameStopDrag);
+      };
+
+      draggableainameFloatButton.addEventListener('mousedown', draggableainameStartDrag);
+      draggableainameFloatButton.addEventListener('touchstart', draggableainameStartDrag, { passive: false });
+    })();
+  </script>
+</div>	  
 </body>
 </html>
