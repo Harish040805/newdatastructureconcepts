@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Infix Postfix Prefix Converter</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; text-align: center; }
+    input[type="text"] { padding: 10px; width: 420px; font-size: 16px; border-radius: 6px; border: 2px solid #b37029; }
+    button { padding: 10px 20px; font-size: 16px; margin-left: 10px; cursor: pointer; }
+    .container-wrapper { display: flex; justify-content: space-around; margin-top: 30px; gap: 5px; align-items: start; }
+    .container { width: 30vw; min-height: 120px; background-color: #fee9d2; border: 2px solid #b37029; display: flex; justify-content: center; align-items: center; 
+      font-size: 15px; font-weight: bold; border-radius: 6px; padding: 32px; box-sizing: border-box; word-wrap: break-word; text-align: center; position: relative; }
+    .titleo{ color: #b37029; }
+    #convertBtn{ background-color: #b37029; color: #fff; border-radius: 6px; border: 2px solid #935b1e; }
+    #convertBtn:hover{ background-color: #985f21; color: #fff; border-radius: 6px; border: 2px solid #935b1e; }
+    .copy-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; }
+    .copy-btn { padding: 6px 10px; font-size: 13px; cursor: pointer; border-radius: 4px; border: 1px solid #b37029; background: white; color: #b37029; }
+    .copy-btn:hover { padding: 6px 10px; font-size: 13px; cursor: pointer; border-radius: 4px; border: 1px solid #b37029; background: #b37029; color: #fff; }
+    .small-note { margin-top: 12px; font-size: 13px; color: #b37029; font-weight: bold; }
+    #stepCanvas { width: 90vw; margin: 30px auto; background: #fff8f0; border: 2px solid #b37029; padding: 12px; border-radius: 8px; box-sizing: border-box; }
+    #stepCanvas h3{ margin: 6px 0; color: #b37029; }
+    #stepControls { margin-bottom:10px; }
+    #stepDisplay { display:flex; gap:12px; align-items:flex-start; }
+    #stepInfo { min-height:80px; font-weight:600; text-align:left; }
+    #stackViz { min-height:160px; border:1px solid #e6cdb8; padding:8px; border-radius:6px; background:#fff; display:flex; flex-direction:column; align-items:flex-start; }
+    .stack-item { padding:6px; border:1px solid #b37029; border-radius:4px; margin-bottom:6px; background:#fffaf0; min-width:90%; box-sizing:border-box; text-align:center; }
+    #auxOutput { font-weight:600; color:#333; }
+    #timeline { margin-top:8px; font-size:13px; color:#333; }
+  </style>
+</head>
+<body>
+  <h2 class="titleo">Infix Postfix Prefix Converter</h2>
+
+  <input id="textInput" type="text"
+         placeholder="Enter prefix, infix or postfix expression (no spaces allowed)">
+  <button id="convertBtn">Convert</button>
+
+  <div class="small-note">
+    NOTE: Whitespaces are not allowed in the input expression. Please enter the expression without any spaces.
+  </div>
+
+  <div class="container-wrapper">
+    <div>
+      <div class="container" id="container1">Output 1</div>
+    </div>
+
+    <div>
+      <div class="container" id="container2">Output 2</div>
+    </div>
+
+    <div>
+      <div class="container" id="container3">Output 3</div>
+    </div>
+  </div>
+
+  <div id="stepCanvas">
+    <div id="stepControls">
+      <button class="copy-btn" id="prevStep">Prev</button>
+      <button class="copy-btn" id="nextStep">Next</button>
+      <button class="copy-btn" id="playSteps">Play</button>
+      <button class="copy-btn" id="clearSteps">Clear</button>
+    </div>
+
+    <div id="stepDisplay">
+      <div style="flex:1; text-align:left;">
+        <div id="stepInfo">Press Convert to generate step-by-step push/pop simulation here.</div>
+        <div id="timeline"></div>
+      </div>
+
+      <div style="width:340px;">
+        <div id="stackTitle" style="font-weight:700; margin-bottom:6px;">Stack (top → bottom)</div>
+        <div id="stackViz"></div>
+        <div id="auxViz" style="margin-top:8px; font-weight:700;">Aux Output: <span id="auxOutput"></span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const OPS = ['+', '-', '*', '/', '^'];
+
+    function isOperator(c) {
+      return OPS.includes(c);
+    }
+
+    function postfixToInfix(exp) {
+      const stack = [];
+      for (let i = 0; i < exp.length; i++) {
+        const c = exp[i];
+        if (/[a-zA-Z0-9]/.test(c)) {
+          stack.push(c);
+        } else if (isOperator(c)) {
+          const op2 = stack.pop();
+          const op1 = stack.pop();
+          if (op1 === undefined || op2 === undefined) throw new Error("Invalid postfix expression");
+          stack.push("(" + op1 + c + op2 + ")");
+        } else {
+          throw new Error("Invalid character in expression");
+        }
+      }
+      if (stack.length !== 1) throw new Error("Invalid postfix expression");
+      return stack[0];
+    }
+
+    function prefixToInfix(exp) {
+      const stack = [];
+      for (let i = exp.length - 1; i >= 0; i--) {
+        const c = exp[i];
+        if (/[a-zA-Z0-9]/.test(c)) {
+          stack.push(c);
+        } else if (isOperator(c)) {
+          const op1 = stack.pop();
+          const op2 = stack.pop();
+          if (op1 === undefined || op2 === undefined) throw new Error("Invalid prefix expression");
+          stack.push("(" + op1 + c + op2 + ")");
+        } else {
+          throw new Error("Invalid character in expression");
+        }
+      }
+      if (stack.length !== 1) throw new Error("Invalid prefix expression");
+      return stack[0];
+    }
+
+    function infixToPostfix(exp) {
+      function precedence(op) {
+        switch (op) {
+          case '+': case '-': return 1;
+          case '*': case '/': return 2;
+          case '^': return 3;
+          default: return 0;
+        }
+      }
+      function isRightAssociative(op) {
+        return op === '^';
+      }
+
+      const stack = [];
+      let result = "";
+
+      for (let i = 0; i < exp.length; i++) {
+        const c = exp[i];
+        if (/[a-zA-Z0-9]/.test(c)) {
+          result += c;
+        } else if (c === '(') {
+          stack.push(c);
+        } else if (c === ')') {
+          while (stack.length && stack[stack.length - 1] !== '(') result += stack.pop();
+          if (!stack.length) throw new Error("Mismatched parentheses");
+          stack.pop(); 
+        } else if (isOperator(c)) {
+          while (
+            stack.length &&
+            stack[stack.length - 1] !== '(' &&
+            (
+              (precedence(c) < precedence(stack[stack.length - 1])) ||
+              (precedence(c) === precedence(stack[stack.length - 1]) && !isRightAssociative(c))
+            )
+          ) {
+            result += stack.pop();
+          }
+          stack.push(c);
+        } else {
+          throw new Error("Invalid character in expression");
+        }
+      }
+
+      while (stack.length) {
+        const top = stack.pop();
+        if (top === '(' || top === ')') throw new Error("Mismatched parentheses");
+        result += top;
+      }
+      return result;
+    }
+
+    function infixToPrefix(exp) {
+      function reverseAndSwapParens(s) {
+        return s.split("").reverse().map(ch => {
+          if (ch === '(') return ')';
+          if (ch === ')') return '(';
+          return ch;
+        }).join("");
+      }
+      const rev = reverseAndSwapParens(exp);
+      const postfixOfRev = infixToPostfix(rev);
+      return postfixOfRev.split("").reverse().join("");
+    }
+
+    function postfixToPrefix(exp) {
+      const infix = postfixToInfix(exp);
+      return infixToPrefix(infix);
+    }
+
+    function prefixToPostfix(exp) {
+      const infix = prefixToInfix(exp);
+      return infixToPostfix(infix);
+    }
+
+    const inputEl = document.getElementById("textInput");
+    const btn = document.getElementById("convertBtn");
+    const c1 = document.getElementById("container1");
+    const c2 = document.getElementById("container2");
+    const c3 = document.getElementById("container3");
+
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === ' ') e.preventDefault();
+    });
+
+    inputEl.addEventListener('paste', (e) => {
+      const paste = (e.clipboardData || window.clipboardData).getData('text');
+      if (/\s/.test(paste)) {
+        e.preventDefault();
+        alert("Whitespaces are not allowed. Paste contains spaces — remove them and try again.");
+      }
+    });
+
+    btn.addEventListener('click', () => {
+      const input = inputEl.value;
+      if (input === "") {
+        alert("Please enter an expression.");
+        return;
+      }
+      if (/\s/.test(input)) {
+        alert("Whitespaces are not allowed. Please remove spaces from the expression.");
+        return;
+      }
+
+      try {
+        let out1 = "", out2 = "", out3 = "";
+        if (isOperator(input[0])) {
+          const infix = prefixToInfix(input);
+          const postfix = infixToPostfix(infix);
+          out1 = "Same Input (Prefix): " + input;
+          out2 = "Infix: " + infix;
+          out3 = "Postfix: " + postfix;
+        } else if (isOperator(input[input.length - 1])) {
+          const infix = postfixToInfix(input);
+          const prefix = infixToPrefix(infix);
+          out1 = "Prefix: " + prefix;
+          out2 = "Infix: " + infix;
+          out3 = "Same Input (Postfix): " + input;
+        } else {
+          const prefix = infixToPrefix(input);
+          const postfix = infixToPostfix(input);
+          out1 = "Same Input (Infix): " + input;
+          out2 = "Prefix: " + prefix;
+          out3 = "Postfix: " + postfix;
+        }
+
+        c1.textContent = out1;
+        c2.textContent = out2;
+        c3.textContent = out3;
+      } catch (err) {
+        alert("Error: " + err.message + ". Please check the expression and try again.");
+        c1.textContent = "Output 1";
+        c2.textContent = "Output 2";
+        c3.textContent = "Output 3";
+      }
+    });
+
+    const stepInfo = document.getElementById('stepInfo');
+    const stackViz = document.getElementById('stackViz');
+    const auxOutput = document.getElementById('auxOutput');
+    const timeline = document.getElementById('timeline');
+    const prevBtn = document.getElementById('prevStep');
+    const nextBtn = document.getElementById('nextStep');
+    const playBtn = document.getElementById('playSteps');
+    const clearBtn = document.getElementById('clearSteps');
+
+    let steps = [];
+    let curStep = 0;
+    let playTimer = null;
+
+    function renderStack(stackArray) {
+      stackViz.innerHTML = '';
+      if (!stackArray || stackArray.length === 0) {
+        stackViz.innerHTML = '<div style="color:#999">[empty]</div>';
+        return;
+      }
+      for (let i = 0; i < stackArray.length; i++) {
+        const d = document.createElement('div');
+        d.className = 'stack-item';
+        d.textContent = stackArray[i];
+        stackViz.appendChild(d);
+      }
+    }
+
+    function updateStepDisplay() {
+      if (!steps || steps.length === 0) {
+        stepInfo.textContent = 'No steps to show. Press Convert to generate a simulation.';
+        renderStack([]);
+        auxOutput.textContent = '';
+        timeline.textContent = '';
+        return;
+      }
+      if (curStep < 0) curStep = 0;
+      if (curStep >= steps.length) curStep = steps.length - 1;
+
+      const s = steps[curStep];
+      stepInfo.textContent = `Step ${curStep + 1} / ${steps.length} — ${s.action}`;
+      renderStack(s.stack);
+      auxOutput.textContent = s.output || '';
+      timeline.textContent = s.note || '';
+    }
+
+    function playSteps() {
+      if (playTimer) {
+        clearInterval(playTimer);
+        playTimer = null;
+        playBtn.textContent = 'Play';
+        return;
+      }
+      playBtn.textContent = 'Pause';
+      playTimer = setInterval(() => {
+        curStep++;
+        if (curStep >= steps.length) {
+          clearInterval(playTimer);
+          playTimer = null;
+          playBtn.textContent = 'Play';
+          curStep = steps.length - 1;
+        }
+        updateStepDisplay();
+      }, 700);
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (!steps.length) return;
+      curStep = Math.max(0, curStep - 1);
+      updateStepDisplay();
+    });
+    nextBtn.addEventListener('click', () => {
+      if (!steps.length) return;
+      curStep = Math.min(steps.length - 1, curStep + 1);
+      updateStepDisplay();
+    });
+    playBtn.addEventListener('click', playSteps);
+    clearBtn.addEventListener('click', () => {
+      steps = [];
+      curStep = 0;
+      if (playTimer) { clearInterval(playTimer); playTimer = null; playBtn.textContent = 'Play'; }
+      updateStepDisplay();
+    });
+
+    function simulatePostfixToInfixSteps(exp) {
+      const s = [];
+      const stack = []; 
+      for (let i = 0; i < exp.length; i++) {
+        const c = exp[i];
+        if (/[a-zA-Z0-9]/.test(c)) {
+          stack.unshift(c);
+          s.push({ action: `Read '${c}' (operand) — push '${c}'`, stack: stack.slice(), output: '' });
+        } else if (isOperator(c)) {
+          const op2 = stack.shift();
+          const op1 = stack.shift();
+          s.push({ action: `Read '${c}' (operator) — pop '${op2}' and '${op1}'`, stack: [ ...(stack.slice()) ], output: '' });
+          const newExpr = '(' + op1 + c + op2 + ')';
+          stack.unshift(newExpr);
+          s.push({ action: `Push '${newExpr}'`, stack: stack.slice(), output: '' });
+        } else {
+          s.push({ action: `Invalid character '${c}'`, stack: stack.slice(), output: '' });
+        }
+      }
+      s.push({ action: 'Final result on stack', stack: stack.slice(), output: stack[0] || '' });
+      return s;
+    }
+
+    function simulatePrefixToInfixSteps(exp) {
+      const s = [];
+      const stack = [];
+      for (let i = exp.length - 1; i >= 0; i--) {
+        const c = exp[i];
+        if (/[a-zA-Z0-9]/.test(c)) {
+          stack.unshift(c);
+          s.push({ action: `Read '${c}' (operand) — push '${c}'`, stack: stack.slice(), output: '' });
+        } else if (isOperator(c)) {
+          const op1 = stack.shift();
+          const op2 = stack.shift();
+          s.push({ action: `Read '${c}' (operator) — pop '${op1}' and '${op2}'`, stack: stack.slice(), output: '' });
+          const newExpr = '(' + op1 + c + op2 + ')';
+          stack.unshift(newExpr);
+          s.push({ action: `Push '${newExpr}'`, stack: stack.slice(), output: '' });
+        } else {
+          s.push({ action: `Invalid character '${c}'`, stack: stack.slice(), output: '' });
+        }
+      }
+      s.push({ action: 'Final result on stack', stack: stack.slice(), output: stack[0] || '' });
+      return s;
+    }
+
+    function simulateInfixToPostfixSteps(exp) {
+      const s = [];
+      const opStack = [];
+      let output = '';
+
+      function precedence(op) {
+        switch (op) {
+          case '+': case '-': return 1;
+          case '*': case '/': return 2;
+          case '^': return 3;
+          default: return 0;
+        }
+      }
+      function isRightAssociative(op) { return op === '^'; }
+
+      for (let i = 0; i < exp.length; i++) {
+        const c = exp[i];
+        if (/[a-zA-Z0-9]/.test(c)) {
+          output += c;
+          s.push({ action: `Read '${c}' (operand) — add to output`, stack: opStack.slice(), output: output });
+        } else if (c === '(') {
+          opStack.unshift(c);
+          s.push({ action: `Read '(' — push to operator stack`, stack: opStack.slice(), output: output });
+        } else if (c === ')') {
+          s.push({ action: `Read ')' — pop until '('`, stack: opStack.slice(), output: output });
+          while (opStack.length && opStack[0] !== '(') {
+            const popped = opStack.shift();
+            output += popped;
+            s.push({ action: `Pop '${popped}' to output`, stack: opStack.slice(), output: output });
+          }
+          if (opStack.length && opStack[0] === '(') {
+            opStack.shift();
+            s.push({ action: `Pop '(' from operator stack`, stack: opStack.slice(), output: output });
+          }
+        } else if (isOperator(c)) {
+          s.push({ action: `Read operator '${c}' — compare precedence and maybe pop`, stack: opStack.slice(), output: output });
+          while (
+            opStack.length &&
+            opStack[0] !== '(' &&
+            (
+              precedence(opStack[0]) > precedence(c) ||
+              (precedence(opStack[0]) === precedence(c) && !isRightAssociative(c))
+            )
+          ) {
+            const popped = opStack.shift();
+            output += popped;
+            s.push({ action: `Pop '${popped}' to output (higher/equal precedence)`, stack: opStack.slice(), output: output });
+          }
+          opStack.unshift(c);
+          s.push({ action: `Push operator '${c}' onto operator stack`, stack: opStack.slice(), output: output });
+        } else {
+          s.push({ action: `Invalid char '${c}'`, stack: opStack.slice(), output: output });
+        }
+      }
+
+      while (opStack.length) {
+        const popped = opStack.shift();
+        output += popped;
+        s.push({ action: `At end: pop '${popped}' to output`, stack: opStack.slice(), output: output });
+      }
+
+      s.push({ action: 'Final postfix result', stack: opStack.slice(), output: output });
+      return s;
+    }
+
+    btn.addEventListener('click', () => {
+      const input = inputEl.value;
+      if (!input || /\s/.test(input)) {
+        steps = [];
+        updateStepDisplay();
+        return;
+      }
+
+      try {
+        if (isOperator(input[0])) {
+          steps = simulatePrefixToInfixSteps(input);
+        } else if (isOperator(input[input.length - 1])) {
+          steps = simulatePostfixToInfixSteps(input);
+        } else {
+          steps = simulateInfixToPostfixSteps(input);
+        }
+        curStep = 0;
+        updateStepDisplay();
+      } catch (err) {
+        steps = [{ action: 'Error during simulation: ' + err.message, stack: [], output: '' }];
+        curStep = 0;
+        updateStepDisplay();
+      }
+    });
+
+    updateStepDisplay();
+  </script>
+</body>
+</html>
