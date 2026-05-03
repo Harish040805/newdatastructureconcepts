@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travelling Sales Person Problem</title>
+    <style>
+        :root {
+            --bg: #fff9f0;
+            --panel: #ffffff;
+            --text: #3c2f2f;
+            --accent: #ff6b6b;
+            --green: #4caf50;
+            --blue: #4db6ac;
+            --border: #3c2f2f;
+            --yellow: #fbc02d;
+        }
+        body { 
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; 
+            background-color: var(--bg); 
+            color: var(--text);
+            margin: 0; 
+            padding: 20px; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            height: 100vh; 
+            box-sizing: border-box; 
+        }
+        
+        /* Main Layout */
+        .main-wrapper { 
+            display: flex; 
+            gap: 20px; 
+            max-width: 1500px; 
+            width: 100%; 
+            height: 94vh; 
+            align-items: stretch; 
+        }
+
+        /* Canvas Section - Transparent background/border removed from wrapper */
+        .canvas-container { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .canvas-area { 
+            flex: 1; 
+            background: #fff; 
+            border: 6px solid var(--border); 
+            border-radius: 40px; 
+            position: relative; 
+            overflow: hidden; 
+            cursor: crosshair;
+            box-shadow: 12px 12px 0px var(--border);
+        }
+
+        canvas { display: block; }
+
+        /* Sidebar Section */
+        .sidebar { 
+            width: 280px; 
+            background: var(--panel); 
+            border: 6px solid var(--border); 
+            border-radius: 40px;
+            padding: 25px; 
+            box-shadow: 12px 12px 0px var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
+
+        h1 { 
+            text-align: center; 
+            font-size: 1.6rem; 
+            color: var(--accent); 
+            margin: 0; 
+            text-decoration: underline wavy var(--blue); 
+            line-height: 1.2; 
+        }
+
+        .status-bar { 
+            text-align: center; 
+            font-weight: bold; 
+            color: var(--accent); 
+            font-size: 1.1rem;
+            background: #fff3cd; 
+            padding: 10px; 
+            border-radius: 15px; 
+            border: 2px dashed var(--border); 
+        }
+
+        .button-group { display: flex; flex-direction: column; gap: 12px; }
+
+        .btn { 
+            background: #f0f0f0; 
+            color: var(--text); 
+            border: 3px solid var(--border); 
+            padding: 15px; 
+            border-radius: 15px; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-family: inherit;
+            box-shadow: 4px 4px 0px var(--border); 
+            transition: 0.1s; 
+            text-align: left; 
+        }
+
+        .btn.active { color: white; transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--border); }
+        #nodeBtn.active { background: var(--blue); }
+        #edgeBtn.active { background: var(--accent); }
+        #moveBtn.active { background: var(--yellow); color: var(--text); }
+        .btn-solve { background: var(--green); color: white; margin-top: 10px; }
+        .btn-clear { background: #9e9e9e; color: white; }
+
+        #result-area { 
+            margin-top: 15px; 
+            padding: 15px; 
+            border: 4px dashed var(--green); 
+            border-radius: 20px;
+            background: #f1f8e9; 
+            display: none; 
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        .instructions-mini { 
+            font-size: 0.95rem; 
+            background: #e0f2f1; 
+            padding: 10px; 
+            border-radius: 15px;
+            border: 2px solid var(--blue); 
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <!-- Left: Just the Canvas -->
+    <div class="canvas-container">
+        <div class="canvas-area" id="canvasFrame">
+            <canvas id="tspCanvas"></canvas>
+        </div>
+        <div id="result-area">
+            <div id="pathResult" style="font-size: 1rem; font-weight: bold;"></div>
+            <div id="costResult" style="font-size: 1.6rem; color: #2e7d32; font-weight: bold;"></div>
+        </div>
+    </div>
+
+    <!-- Right: Tool Sidebar -->
+    <div class="sidebar">
+        <h1>Travelling Sales Person Problem 👔</h1>
+	<br>
+        <div class="status-bar" id="statusBar">Select a tool to begin!</div>
+        
+        <div class="button-group">
+            <button id="nodeBtn" class="btn" onclick="setMode('node')">📍 Add City</button>
+            <button id="edgeBtn" class="btn" onclick="setMode('edge')">🛣️ Draw Roads</button>
+            <button id="moveBtn" class="btn" onclick="setMode('move')">🖐️ Move City</button>
+            <button class="btn btn-clear" onclick="clearCanvas()">🗑️ Reset Map</button>
+            <button class="btn btn-solve" onclick="solveTSP()">🚀 Solve TSP</button>
+        </div>
+
+        <div class="instructions-mini">
+            <b>Goal:</b> Visit all cities once and return to 🏠0 at minimum cost!
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('tspCanvas');
+    const ctx = canvas.getContext('2d');
+    const status = document.getElementById('statusBar');
+    const frame = document.getElementById('canvasFrame');
+    
+    let cities = [], roads = [], mode = '', isDragging = false, selectedCity = null, edgeStart = null, mousePos = { x: 0, y: 0 };
+
+    function resize() {
+        canvas.width = frame.clientWidth;
+        canvas.height = frame.clientHeight;
+        draw();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function setMode(newMode) {
+        mode = (mode === newMode) ? '' : newMode;
+        document.getElementById('nodeBtn').classList.toggle('active', mode === 'node');
+        document.getElementById('edgeBtn').classList.toggle('active', mode === 'edge');
+        document.getElementById('moveBtn').classList.toggle('active', mode === 'move');
+        
+        const labels = {
+            'node': "Click to add a City",
+            'edge': "Drag between cities",
+            'move': "Drag to move cities",
+            '': "Select a tool to begin!"
+        };
+        status.innerText = labels[mode];
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        selectedCity = cities.find(c => Math.hypot(c.x - x, c.y - y) < 25);
+
+        if (mode === 'node' && !selectedCity) {
+            cities.push({ x, y, id: cities.length });
+            draw();
+        } else if (mode === 'edge' && selectedCity) {
+            edgeStart = selectedCity;
+        } else if (mode === 'move' && selectedCity) {
+            isDragging = true;
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mousePos.x = e.clientX - rect.left; mousePos.y = e.clientY - rect.top;
+        if (mode === 'move' && isDragging && selectedCity) {
+            selectedCity.x = mousePos.x;
+            selectedCity.y = mousePos.y;
+            draw();
+        } else if (mode === 'edge' && edgeStart) {
+            draw();
+        }
+    });
+
+    canvas.addEventListener('mouseup', (e) => {
+        if (mode === 'edge' && edgeStart) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top;
+            const edgeEnd = cities.find(c => c !== edgeStart && Math.hypot(c.x - x, c.y - y) < 25);
+            if (edgeEnd) {
+                const cost = prompt(`Travel cost from City ${edgeStart.id} to City ${edgeEnd.id}:`, "10");
+                if (cost !== null) {
+                    const w = parseInt(cost) || 0;
+                    roads = roads.filter(r => !((r.u === edgeStart.id && r.v === edgeEnd.id) || (r.u === edgeEnd.id && r.v === edgeStart.id)));
+                    roads.push({ u: edgeStart.id, v: edgeEnd.id, w: w });
+                }
+            }
+        }
+        isDragging = false; selectedCity = null; edgeStart = null; draw();
+    });
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        roads.forEach(r => {
+            const c1 = cities[r.u], c2 = cities[r.v];
+            ctx.beginPath(); ctx.moveTo(c1.x, c1.y); ctx.lineTo(c2.x, c2.y);
+            ctx.strokeStyle = '#3c2f2f'; ctx.lineWidth = 4; ctx.stroke();
+            ctx.fillStyle = '#ff6b6b'; ctx.font = 'bold 16px Comic Sans MS'; ctx.textAlign = 'center';
+            ctx.fillText(`$${r.w}`, (c1.x + c2.x) / 2, (c1.y + c2.y) / 2 - 10);
+        });
+        if (mode === 'edge' && edgeStart) {
+            ctx.beginPath(); ctx.moveTo(edgeStart.x, edgeStart.y); ctx.lineTo(mousePos.x, mousePos.y);
+            ctx.strokeStyle = '#aaa'; ctx.setLineDash([5, 5]); ctx.stroke(); ctx.setLineDash([]);
+        }
+        cities.forEach(c => {
+            ctx.beginPath(); ctx.arc(c.x, c.y, 22, 0, Math.PI * 2);
+            ctx.fillStyle = c.id === 0 ? '#4caf50' : '#4db6ac'; ctx.fill();
+            ctx.strokeStyle = '#3c2f2f'; ctx.lineWidth = 3; ctx.stroke();
+            ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.font = 'bold 16px Comic Sans MS';
+            ctx.fillText(c.id === 0 ? "🏠" : c.id, c.x, c.y + 6);
+        });
+    }
+
+    function clearCanvas() { 
+        cities = []; roads = []; 
+        document.getElementById('result-area').style.display = 'none'; 
+        draw(); 
+    }
+
+    function solveTSP() {
+        const n = cities.length;
+        if (n < 2) return alert("Add at least 2 cities!");
+        const adj = Array.from({ length: n }, () => Array(n).fill(Infinity));
+        roads.forEach(r => { adj[r.u][r.v] = r.w; adj[r.v][r.u] = r.w; });
+        const memo = new Map();
+        function find(curr, mask) {
+            if (mask === (1 << n) - 1) return { cost: adj[curr][0], path: [0] };
+            const key = `${curr}-${mask}`;
+            if (memo.has(key)) return memo.get(key);
+            let best = { cost: Infinity, path: [] };
+            for (let next = 0; next < n; next++) {
+                if (!(mask & (1 << next)) && adj[curr][next] !== Infinity) {
+                    const sub = find(next, mask | (1 << next));
+                    if (sub.cost !== Infinity) {
+                        const total = adj[curr][next] + sub.cost;
+                        if (total < best.cost) best = { cost: total, path: [next, ...sub.path] };
+                    }
+                }
+            }
+            memo.set(key, best); return best;
+        }
+        const res = find(0, 1);
+        if (res.cost === Infinity) return alert("All cities must be reachable! Check your roads.");
+        document.getElementById('result-area').style.display = 'block';
+        document.getElementById('pathResult').innerText = "Travel Sequence: " + [0, ...res.path].join(' ➔ ');
+        document.getElementById('costResult').innerText = `Total Cost: $${res.cost}`;
+    }
+</script>
+</body>
+</html>
