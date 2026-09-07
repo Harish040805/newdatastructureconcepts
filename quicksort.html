@@ -15,104 +15,24 @@
     --text-secondary: #666666;
     --border-color: #e5e5e5;
 }
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 1100px;
-}
-
-header h1 {
-    font-size: 2.2rem;
-    color: var(--gold-dark);
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-header p {
-    color: var(--text-secondary);
-    font-size: 1rem;
-}
-
-.container {
-    width: 100%;
-    max-width: 1100px;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-}
-
-.card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.controls-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr auto;
-    gap: 15px;
-    align-items: flex-end;
-}
-
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 1100px; }
+header h1 { font-size: 2.2rem; color: var(--gold-dark); margin-bottom: 8px; font-weight: 600; }
+header p { color: var(--text-secondary); font-size: 1rem; }
+.container { width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+.card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; }
+.controls-grid { display: grid; grid-template-columns: 2fr 1fr auto; gap: 15px; align-items: flex-end; }
 @media (max-width: 768px) {
     .controls-grid {
         grid-template-columns: 1fr;
     }
 }
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.input-group label {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.input-group input, .input-group select {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    outline: none;
-}
-
-.input-group input:focus, .input-group select:focus {
-    border-color: var(--accent-gold);
-}
-
-.btn-group {
-    display: flex;
-    gap: 10px;
-}
-
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.input-group input, .input-group select { background-color: #ffffff; border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 14px; border-radius: 6px; font-size: 0.95rem; outline: none; }
+.input-group input:focus, .input-group select:focus { border-color: var(--accent-gold); }
+.btn-group { display: flex; gap: 10px; }
 button {
     background-color: var(--accent-gold);
     color: #ffffff;
@@ -146,7 +66,6 @@ button.secondary {
 button.secondary:hover {
     background-color: var(--gold-light);
 }
-
 .legend {
     display: flex;
     flex-wrap: wrap;
@@ -156,20 +75,17 @@ button.secondary:hover {
     border-top: 1px solid var(--border-color);
     font-size: 0.85rem;
 }
-
 .legend-item {
     display: flex;
     align-items: center;
     gap: 6px;
 }
-
 .legend-box {
     width: 14px;
     height: 14px;
     border-radius: 3px;
     border: 1px solid var(--border-color);
 }
-
 .visualizer-area {
     display: flex;
     flex-direction: column;
@@ -180,7 +96,6 @@ button.secondary:hover {
     position: relative;
     overflow-x: auto;
 }
-
 .bars-container {
     display: flex;
     align-items: flex-end;
@@ -189,14 +104,12 @@ button.secondary:hover {
     padding-bottom: 30px;
     position: relative;
 }
-
 .bar-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
 }
-
 .bar {
     width: 42px;
     background-color: #ffffff;
@@ -211,14 +124,12 @@ button.secondary:hover {
     color: var(--text-primary);
     transition: background-color 0.3s ease, height 0.3s ease;
 }
-
 .bar-index {
     position: absolute;
     bottom: -22px;
     font-size: 0.75rem;
     color: var(--text-secondary);
 }
-
 .pointer-tag {
     position: absolute;
     top: -25px;
@@ -228,37 +139,31 @@ button.secondary:hover {
     border-radius: 4px;
     text-transform: uppercase;
 }
-
 .pointer-i {
     background-color: var(--gold-light);
     color: var(--gold-dark);
     border: 1px solid var(--accent-gold);
 }
-
 .pointer-j {
     background-color: #f5f5f5;
     color: #333333;
     border: 1px solid #ccc;
 }
-
 .pointer-pivot {
     background-color: var(--accent-gold);
     color: #ffffff;
 }
-
 .bar.default { background-color: #ffffff; border-color: var(--border-color); color: var(--text-primary); }
 .bar.pivot { background-color: var(--accent-gold); color: #ffffff; border-color: var(--gold-dark); }
 .bar.i-pointer { background-color: var(--gold-light); color: var(--gold-dark); border-color: var(--accent-gold); }
 .bar.j-pointer { background-color: #eeeeee; color: #1a1a1a; border-color: #999999; }
 .bar.sorted { background-color: var(--gold-dark); color: #ffffff; border-color: var(--gold-dark); }
 .bar.inactive { opacity: 0.3; }
-
 .explanation-panel {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
-
 .status-badge {
     align-self: flex-start;
     padding: 4px 10px;
@@ -270,30 +175,15 @@ button.secondary:hover {
     color: var(--gold-dark);
     border: 1px solid var(--accent-gold);
 }
-
-.step-description {
-    font-size: 1.05rem;
-    line-height: 1.5;
-    min-height: 48px;
-}
-
-.call-stack-container {
-    margin-top: 10px;
-}
-
+.step-description { font-size: 1.05rem; line-height: 1.5; min-height: 48px; }
+.call-stack-container { margin-top: 10px; }
 .call-stack-title {
     font-size: 0.85rem;
     color: var(--text-secondary);
     margin-bottom: 6px;
     font-weight: 600;
 }
-
-.stack-frames {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
+.stack-frames { display: flex; flex-wrap: wrap; gap: 8px; }
 .frame {
     background-color: #ffffff;
     border: 1px solid var(--border-color);
@@ -303,20 +193,13 @@ button.secondary:hover {
     font-family: monospace;
     color: var(--text-secondary);
 }
-
 .frame.active {
     border-color: var(--accent-gold);
     color: var(--gold-dark);
     font-weight: bold;
     background-color: var(--gold-light);
 }
-
-.error-message {
-    color: #cc0000;
-    font-size: 0.85rem;
-    margin-top: 4px;
-    display: none;
-}
+.error-message { color: #cc0000; font-size: 0.85rem; margin-top: 4px; display: none; }
 </style>
 </head>
 <body>
@@ -333,16 +216,6 @@ button.secondary:hover {
                 <input type="text" id="dataInput" placeholder="e.g. 40,10,20,50">
                 <div class="error-message" id="errorMessage">Invalid input! Please enter numbers separated by commas.</div>
             </div>
-
-            <div class="input-group">
-                <label for="speedSelect">🟦 Animation Speed</label>
-                <select id="speedSelect">
-                    <option value="1500">Slow (1.5s)</option>
-                    <option value="800" selected>Normal (0.8s)</option>
-                    <option value="300">Fast (0.3s)</option>
-                </select>
-            </div>
-
             <div class="btn-group">
                 <button id="startBtn" onclick="initSimulation()">⌛ Load & Start</button>
                 <button id="prevBtn" class="btn btn-secondary" onclick="executePrevStep()" disabled>⏮️ Previous Step</button>
@@ -361,10 +234,17 @@ button.secondary:hover {
         </div>
     </div>
 
+    <div class="card">
+          <h2>❓ HOW TO CHOOSE PIVOT ELEMENT?</h2>
+          <p><strong>🟧 First or Last Element:</strong> Simple to code, but makes the algorithm very slow O(n^2) if the data is already sorted.</p>
+          <p><strong>🟫 Random Element:</strong> Safest and most popular for real-world use because it prevents worst-case slowdowns.</p>
+          <p><strong>🟦 Middle Element:</strong> Picks the exact center index of the array.</p>
+          <p><strong>🟪 Median-of-Three:</strong> Looks at the first, middle, and last elements, then picks the middle value among them for the best balance.</p>
+          <p>Once chosen, the pivot is moved to its correct final position, and the process repeats for the left and right sides.</p>
+    </div>
     <div class="card visualizer-area">
         <div class="bars-container" id="barsContainer"></div>
     </div>
-
     <div class="card explanation-panel">
         <div class="status-badge" id="statusBadge">Ready</div>
         <div class="step-description" id="stepDescription">👉 Enter array elements above and click <strong>Load & Start</strong> to visualize the partition process step-by-step.</div>
